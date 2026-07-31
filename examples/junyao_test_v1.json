@@ -1,0 +1,36 @@
+{
+  "category": "mov",
+  "source_file": "bourns_14d_demo.pdf",
+  "values": {
+    "supplier": "Bourns",
+    "part_number": "14D471K",
+    "varistor_voltage": {
+      "value": "470",
+      "unit": "V",
+      "tolerance": "423-517V"
+    },
+    "max_continuous_voltage": {
+      "value": "300/385",
+      "unit": "VAC/VDC"
+    },
+    "max_peak_current": {
+      "value": "4500",
+      "unit": "A"
+    },
+    "energy_rating": {
+      "value": "125",
+      "unit": "J"
+    },
+    "clamping_voltage": {
+      "value": "775",
+      "unit": "V"
+    },
+    "power_rating": {
+      "value": "",
+      "unit": ""
+    },
+    "approvals": "UL1449, cUL, VDE, CQC",
+    "operating_temp": "-40 to +85 C",
+    "packaging": ""
+  }
+}

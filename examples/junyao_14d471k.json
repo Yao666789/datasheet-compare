@@ -1,0 +1,17 @@
+{
+  "category": "mov",
+  "source_file": "junyao_14d_demo.pdf",
+  "values": {
+    "supplier": "君耀",
+    "part_number": "14D471K",
+    "varistor_voltage": "470V ±10%",
+    "max_continuous_voltage": "300VAC / 385VDC",
+    "max_peak_current": "4000A (8/20us, 1次)",
+    "energy_rating": "110J",
+    "clamping_voltage": "790V @50A",
+    "power_rating": "0.5W",
+    "approvals": "UL, CQC",
+    "operating_temp": "-40~+85°C",
+    "packaging": "Tape&Reel"
+  }
+}

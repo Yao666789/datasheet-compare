@@ -1,0 +1,43 @@
+# 压敏电阻 (MOV) 工艺视角参数模板
+# v0.1.1：按小G"砍到 8+1" + 小k"补 power_rating / packaging"收敛
+category: 压敏电阻 (Metal Oxide Varistor / MOV)
+fields:
+  - key: supplier
+    name: 供应商
+    hint: 制造商/品牌，如 Bourns, TDK(EPCOS), Littelfuse, 君耀, 风华
+  - key: part_number
+    name: 型号
+    hint: 具体料号；系列料表时取 --part 指定的那一行
+  - key: varistor_voltage
+    name: 压敏电压 V1mA
+    unit: V
+    hint: 1mA 直流下的压敏电压及容差，如 470V ±10%
+  - key: max_continuous_voltage
+    name: 最大连续工作电压
+    unit: VAC/VDC
+    hint: Max Allowable Voltage，交流/直流两个值，如 300VAC / 385VDC
+  - key: max_peak_current
+    name: 最大通流量 (8/20μs)
+    unit: A
+    hint: Max Peak Current，注意是 1 次还是 2 次脉冲
+  - key: energy_rating
+    name: 能量耐量 (10/1000μs)
+    unit: J
+    hint: Energy Rating
+  - key: clamping_voltage
+    name: 限制电压
+    unit: V
+    hint: Clamping Voltage @ 规定电流，如 775V @50A
+  - key: power_rating
+    name: 额定功率
+    unit: W
+    hint: Power Rating，影响发热评估
+  - key: approvals
+    name: 安规认证
+    hint: UL/cUL、VDE、CQC 等认证标志及证书号
+  - key: operating_temp
+    name: 工作温度范围
+    hint: 如 -40~+85°C
+  - key: packaging
+    name: 包装形式
+    hint: Bulk / Tape&Reel / Ammo 之类，工艺供料与编带方向直接相关

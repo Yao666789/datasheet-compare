@@ -1,0 +1,42 @@
+{
+  "category": "ntc",
+  "source_file": "sck_series_ntc.pdf",
+  "values": {
+    "supplier": "THINKING",
+    "part_number": "SCK10054",
+    "r25": {
+      "value": "5",
+      "unit": "Ω"
+    },
+    "max_steady_current": {
+      "value": "4",
+      "unit": "A"
+    },
+    "max_load_capacitance": {
+      "value": "470",
+      "unit": "µF"
+    },
+    "b_constant": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "Electrical Characteristics table (pages 3-6)",
+          "All other datasheet pages"
+        ]
+      }
+    },
+    "thermal_time_constant": {
+      "value": "43",
+      "unit": "Sec.",
+      "qualifier": "Approx."
+    },
+    "max_power": {
+      "value": "2.4",
+      "unit": "W"
+    },
+    "operating_temp": "-40 ~ +170°C",
+    "packaging": "Bulk: Standard Lead 200pcs/bag, Cut Lead 250pcs/bag, L kink 200pcs/bag; Reel: 1,500pcs/reel, D=340±10mm, D1=31±1mm, W=46±1mm; Ammo: 1,300pcs/box, L=345mm, W=275mm, H=55mm"
+  }
+}

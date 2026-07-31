@@ -1,0 +1,19 @@
+{
+  "category": "x2",
+  "source_file": "x2_kemet_r52.pdf",
+  "values": {
+    "supplier": "KEMET",
+    "part_number": "R52",
+    "capacitance": "",
+    "tolerance": "±20%, ±10%",
+    "rated_voltage": "310 VAC",
+    "safety_class": "Class X2",
+    "approvals": "ENEC, UL, cUL, CQC",
+    "climatic_category": "40/110/56",
+    "thb_rating": "THB Grade IIB: 85°C, 85% RH, 500 hours at URAC acc. to IEC 60384-14",
+    "operating_temp": "-40°C to +110°C",
+    "dissipation_factor": "C ≤ 0.1 µF: 0.3%; C > 0.1 µF: 0.2% (at 1 kHz at 25°C ±5°C)",
+    "flame_rating": "UL94 V-0",
+    "packaging": ""
+  }
+}

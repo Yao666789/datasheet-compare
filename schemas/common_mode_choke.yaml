@@ -1,0 +1,35 @@
+# 共模电感工艺视角参数模板
+# v0.1.1：按小G"砍到 7" + 小k"补 packaging"收敛（共模电感选型本质就是阻抗+电流，别的都是锦上添花）
+category: 共模电感 (Common Mode Choke)
+fields:
+  - key: supplier
+    name: 供应商
+    hint: 制造商/品牌，如 TDK, Murata, Würth, 顺络
+  - key: part_number
+    name: 型号
+    hint: 具体料号；系列料表时取 --part 指定的那一行
+  - key: inductance
+    name: 共模电感量
+    unit: mH
+    hint: Inductance @ 测试频率，如 10mH @1kHz
+  - key: impedance
+    name: 阻抗特性
+    unit: Ω
+    hint: Impedance @ 频率，如 1000Ω @100MHz
+  - key: rated_current
+    name: 额定电流
+    unit: A
+    hint: Rated Current
+  - key: dcr
+    name: 直流电阻 DCR
+    unit: mΩ
+    hint: DC Resistance max，每绕组
+  - key: hipot
+    name: 耐压
+    hint: Withstanding Voltage，绕组间及绕组对磁芯，如 1500VAC
+  - key: operating_temp
+    name: 工作温度范围
+    hint: 含温升电流定义条件
+  - key: packaging
+    name: 包装形式
+    hint: Tape&Reel / Tray / Bulk

@@ -1,0 +1,45 @@
+# X2 安规电容工艺视角参数模板
+# v0.1.1：按小G"砍到 9+1" + 小k"补 THB 湿热等级 / packaging"收敛
+category: X2 安规电容 (Class X2 Suppression Capacitor)
+fields:
+  - key: supplier
+    name: 供应商
+    hint: 制造商/品牌，如 KEMET, TDK, 法拉, 昱电
+  - key: part_number
+    name: 型号
+    hint: 具体料号；系列料表时取 --part 指定的那一行
+  - key: capacitance
+    name: 标称容值
+    unit: µF
+    hint: Rated Capacitance，如 0.1µF / 104
+  - key: tolerance
+    name: 容差
+    hint: 如 ±10% (K)、±20% (M)
+  - key: rated_voltage
+    name: 额定电压
+    unit: VAC
+    hint: Rated Voltage，如 275/305/310/330/350VAC
+  - key: safety_class
+    name: 安规等级
+    hint: Class X2，注意是否同时满足 X1/Y2 等级
+  - key: approvals
+    name: 安规认证
+    hint: UL/cUL、ENEC/VDE、CQC、KC 等
+  - key: climatic_category
+    name: 气候类别
+    hint: Climatic Category，如 40/110/56
+  - key: thb_rating
+    name: 湿热等级
+    hint: THB 85°C/85%RH 等级，如 THB Grade IIB / IIC——安规电容当前头号失效模式
+  - key: operating_temp
+    name: 工作温度范围
+    hint: 如 -40~+110°C
+  - key: dissipation_factor
+    name: 损耗角正切
+    hint: tan δ @1kHz，如 ≤0.1%
+  - key: flame_rating
+    name: 阻燃等级
+    hint: 外壳/灌封料阻燃等级，如 UL94 V-0
+  - key: packaging
+    name: 包装形式
+    hint: Bulk / Tape&Reel / Ammo

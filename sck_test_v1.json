@@ -1,0 +1,76 @@
+{
+  "category": "ntc",
+  "source_file": "sck_series_ntc.pdf",
+  "values": {
+    "supplier": "THINKING",
+    "part_number": "SCK10054",
+    "r25": {
+      "value": "5",
+      "unit": "Ω"
+    },
+    "max_steady_current": {
+      "value": "4",
+      "unit": "A"
+    },
+    "max_load_capacitance": {
+      "value": "470",
+      "unit": "µF"
+    },
+    "b_constant": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第1页正文",
+          "第1页Part Number Code",
+          "第3页Electrical Characteristics表格",
+          "第4页Electrical Characteristics表格",
+          "第5页",
+          "第6页"
+        ]
+      }
+    },
+    "thermal_time_constant": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第3页Electrical Characteristics表格",
+          "第4页Electrical Characteristics表格",
+          "第5页",
+          "第6页"
+        ]
+      }
+    },
+    "max_power": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第3页Electrical Characteristics表格",
+          "第4页Electrical Characteristics表格",
+          "第5页",
+          "第6页"
+        ]
+      }
+    },
+    "operating_temp": "-40 ~ +170°C",
+    "packaging": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第1页正文",
+          "第1页Part Number Code",
+          "第2页结构尺寸",
+          "第3页Electrical Characteristics表格",
+          "第4页"
+        ]
+      }
+    }
+  }
+}

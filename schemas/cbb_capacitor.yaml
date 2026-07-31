@@ -1,0 +1,41 @@
+# CBB 金属化聚丙烯薄膜电容工艺视角参数模板
+# v0.1.1：按小G"砍到 8+1" + 小k"补 rated_voltage_ac (P1) / packaging"收敛
+category: CBB 薄膜电容 (Metallized Polypropylene Film Capacitor)
+fields:
+  - key: supplier
+    name: 供应商
+    hint: 制造商/品牌，如 法拉, KEMET, Panasonic, 昱电
+  - key: part_number
+    name: 型号
+    hint: 具体料号；系列料表时取 --part 指定的那一行
+  - key: capacitance
+    name: 标称容值
+    unit: µF/nF
+    hint: Rated Capacitance，如 0.47µF / 474
+  - key: tolerance
+    name: 容差
+    hint: 如 ±5% (J)、±10% (K)
+  - key: rated_voltage
+    name: 额定电压 (DC)
+    unit: VDC
+    hint: Rated Voltage DC，如 400/630/1000/2000VDC
+  - key: rated_voltage_ac
+    name: 额定电压 (AC)
+    unit: VAC
+    hint: Rated Voltage AC——谐振/跨线应用 datasheet 必标，不补等于丢一半额定值
+  - key: dissipation_factor
+    name: 损耗角正切
+    hint: tan δ @1kHz，如 ≤0.1%
+  - key: insulation_resistance
+    name: 绝缘电阻
+    hint: MΩ 或 MΩ·µF（时间常数）
+  - key: dvdt
+    name: 脉冲上升率 dv/dt
+    unit: V/µs
+    hint: Pulse Rise Time——谐振应用生死线
+  - key: operating_temp
+    name: 工作温度范围
+    hint: 如 -40~+105°C
+  - key: packaging
+    name: 包装形式
+    hint: Bulk / Tape&Reel / Radial Taped

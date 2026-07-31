@@ -1,0 +1,15 @@
+{
+  "category": "cmc",
+  "source_file": "cmc_tdk_b82794c0.pdf",
+  "values": {
+    "supplier": "TDK",
+    "part_number": "B82794C0",
+    "inductance": "4.7 ... 68 mH",
+    "impedance": "",
+    "rated_current": "200 ... 700 mA",
+    "dcr": "",
+    "hipot": "750 V DC, 2 s",
+    "operating_temp": "+60 °C (rated temperature)",
+    "packaging": "24-mm blister tape, wound on 330-mm ∅ reel, 250 pcs./reel"
+  }
+}
