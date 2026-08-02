@@ -23,8 +23,8 @@ fields:
   - key: b_constant
     name: B 值
     unit: K
-    hint: B Constant，如 B25/85=2800K
-    note: 浪涌抑制型 NTC 厂商常不标 B 值（B 值主要用于精密测温型 NTC）——选型看 R25/稳态电流/最大允许电容量。此字段保留但允许为空。
+    hint: B Constant，如 B25/50=2800K
+    note: B 值厂商而异（2026-08-02 实测三份原文）：时恒 MF72 规格承认书电气性能表明确标 B25/50（如 2800K±10%）；兴勤 SCK、Cantherm MF72 规格表不列 B 值（Cantherm 仅在特性栏写 "High material constant (B value)"，无数值）。原文有则必须提取，无则标 not_in_datasheet 并附溯源。
   - key: thermal_time_constant
     name: 热时间常数
     unit: s

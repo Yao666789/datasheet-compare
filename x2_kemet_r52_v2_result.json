@@ -1,0 +1,34 @@
+{
+  "category": "x2",
+  "source_file": "x2_kemet_r52.pdf",
+  "values": {
+    "supplier": "KEMET",
+    "part_number": "R52",
+    "capacitance": {
+      "value": "0.047 – 22",
+      "unit": "µF"
+    },
+    "tolerance": {
+      "value": "±10, ±20",
+      "unit": "%"
+    },
+    "rated_voltage": {
+      "value": "310",
+      "unit": "VAC"
+    },
+    "safety_class": "Class X2",
+    "approvals": "ENEC, UL, cUL, CQC",
+    "climatic_category": "40/110/56",
+    "thb_rating": "THB Grade IIB",
+    "operating_temp": {
+      "value": "-40 to +110",
+      "unit": "°C"
+    },
+    "dissipation_factor": {
+      "value": "0.3 (C ≤ 0.1 µF); 0.2 (C > 0.1 µF)",
+      "unit": "%"
+    },
+    "flame_rating": "UL94 V-0",
+    "packaging": "Bulk (Bag/Tray), Pizza Pack, Ammo Pack, Tape & Reel (Standard Reel ø355 mm), Tape & Reel (Large Reel ø500 mm), per IEC 60286-2"
+  }
+}

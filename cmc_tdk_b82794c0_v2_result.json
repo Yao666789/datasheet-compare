@@ -1,0 +1,45 @@
+{
+  "category": "cmc",
+  "source_file": "cmc_tdk_b82794c0.pdf",
+  "values": {
+    "supplier": "TDK Electronics",
+    "part_number": "B82794C0",
+    "inductance": {
+      "value": "4.7 ... 68 (10 kHz, 50 mV, +20 °C)",
+      "unit": "mH"
+    },
+    "impedance": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "Technical data and measuring conditions",
+          "Characteristics and ordering codes",
+          "Insertion loss"
+        ]
+      }
+    },
+    "rated_current": {
+      "value": "200 ... 700 (50 Hz, +60 °C)",
+      "unit": "mA"
+    },
+    "dcr": {
+      "value": null,
+      "unit": null,
+      "status": "extraction_uncertain",
+      "evidence": {
+        "uncertainty_reason": "DC resistance is specified per individual ordering code in the characteristics table; no single-series value exists for B82794C0."
+      }
+    },
+    "hipot": {
+      "value": "750 (2 s)",
+      "unit": "V DC"
+    },
+    "operating_temp": {
+      "value": "-40 ... +125",
+      "unit": "°C"
+    },
+    "packaging": "24-mm blister tape, wound on 330-mm Ø reel; packing unit: 250 pcs./reel"
+  }
+}

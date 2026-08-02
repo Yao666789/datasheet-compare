@@ -1,0 +1,40 @@
+{
+  "category": "ntc",
+  "source_file": "mf72_shiheng_10d7.pdf",
+  "values": {
+    "supplier": "南京时恒电子科技有限公司",
+    "part_number": "MF72 10D7",
+    "r25": {
+      "value": "10",
+      "unit": "Ω",
+      "tolerance": "±20%"
+    },
+    "max_steady_current": {
+      "value": "0.9",
+      "unit": "A"
+    },
+    "max_load_capacitance": {
+      "value": "100",
+      "unit": "μF"
+    },
+    "b_constant": {
+      "value": "2800",
+      "unit": "K",
+      "tolerance": "±10%"
+    },
+    "thermal_time_constant": {
+      "value": "27",
+      "unit": "sec",
+      "qualifier": "≤"
+    },
+    "max_power": {
+      "value": "1",
+      "unit": "W"
+    },
+    "operating_temp": {
+      "value": "-40 ~ 130",
+      "unit": "℃"
+    },
+    "packaging": "散装方式 Bulk Type；包装袋Packingbag：自封口袋(selfsealingbag) W×H＝11mm×12mm；包装盒packingbox：W×G×H＝335mm×240mm×50mm"
+  }
+}

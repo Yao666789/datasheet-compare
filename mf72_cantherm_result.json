@@ -1,0 +1,74 @@
+{
+  "category": "ntc",
+  "source_file": "mf72_cantherm.pdf",
+  "values": {
+    "supplier": "Cantherm",
+    "part_number": "MF72",
+    "r25": {
+      "value": null,
+      "unit": null,
+      "status": "extraction_uncertain",
+      "evidence": {
+        "uncertainty_reason": "Datasheet is a series table; no exact row for 'MF72', only MF72-xxx sub-models. R25 varies by model."
+      }
+    },
+    "max_steady_current": {
+      "value": null,
+      "unit": null,
+      "status": "extraction_uncertain",
+      "evidence": {
+        "uncertainty_reason": "No exact row for 'MF72'; Max Steady State Current varies by model."
+      }
+    },
+    "max_load_capacitance": {
+      "value": null,
+      "unit": null,
+      "status": "extraction_uncertain",
+      "evidence": {
+        "uncertainty_reason": "No exact row for 'MF72'; Max Load Capacitance at 240VAC varies by model."
+      }
+    },
+    "b_constant": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "Page 3 Main Techno-Parameter",
+          "Page 4 Main Techno-Parameter (cont.)"
+        ]
+      }
+    },
+    "thermal_time_constant": {
+      "value": null,
+      "unit": null,
+      "status": "extraction_uncertain",
+      "evidence": {
+        "uncertainty_reason": "No exact row for 'MF72'; Thermal Time Constant varies by model."
+      }
+    },
+    "max_power": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "Page 3 Main Techno-Parameter",
+          "Page 4 Main Techno-Parameter (cont.)"
+        ]
+      }
+    },
+    "operating_temp": "-55 to 200ºC",
+    "packaging": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "Page 2 Dimensions",
+          "Page 3 Main Techno-Parameter"
+        ]
+      }
+    }
+  }
+}

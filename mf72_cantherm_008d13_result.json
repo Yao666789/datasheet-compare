@@ -1,0 +1,62 @@
+{
+  "category": "ntc",
+  "source_file": "mf72_cantherm.pdf",
+  "values": {
+    "supplier": "Cantherm",
+    "part_number": "MF72-008D13",
+    "r25": {
+      "value": "8",
+      "unit": "Ω",
+      "tolerance": "±20%"
+    },
+    "max_steady_current": {
+      "value": "4",
+      "unit": "A"
+    },
+    "max_load_capacitance": {
+      "value": "330",
+      "unit": "uF"
+    },
+    "b_constant": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第3页 Main Techno-Parameter 表",
+          "第4页 Main Techno-Parameter (cont.) 表",
+          "第3页 Application Characteristics"
+        ]
+      }
+    },
+    "thermal_time_constant": {
+      "value": "60",
+      "unit": "S"
+    },
+    "max_power": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第3页 Main Techno-Parameter 表",
+          "第4页 Main Techno-Parameter (cont.) 表",
+          "全文"
+        ]
+      }
+    },
+    "operating_temp": "-55 to 200ºC",
+    "packaging": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第2页 尺寸规格表",
+          "第3页 正文",
+          "第4页 正文"
+        ]
+      }
+    }
+  }
+}

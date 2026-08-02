@@ -1,0 +1,31 @@
+{
+  "category": "x2",
+  "source_file": "x2_kemet_f863h.pdf",
+  "values": {
+    "supplier": "KEMET",
+    "part_number": "F863H",
+    "capacitance": {
+      "value": "0.1 – 15.0",
+      "unit": "µF"
+    },
+    "tolerance": "±20%, ±10%",
+    "rated_voltage": {
+      "value": "310",
+      "unit": "VAC"
+    },
+    "safety_class": "Class X2",
+    "approvals": "ENEC, UL, cUL, CQC",
+    "climatic_category": "40/125/56",
+    "thb_rating": "Grade IIB",
+    "operating_temp": {
+      "value": "-40 to +125",
+      "unit": "°C"
+    },
+    "dissipation_factor": {
+      "value": "0.3 (C ≤ 0.1 µF, 1 kHz) / 0.2 (C > 0.1 µF, 1 kHz)",
+      "unit": "%"
+    },
+    "flame_rating": "UL94 V-0",
+    "packaging": "Pizza Pack, Ammo Pack, Bulk (Short Leads, Long Leads), Tape & Reel (Standard Reel, Large Reel), Tray"
+  }
+}
