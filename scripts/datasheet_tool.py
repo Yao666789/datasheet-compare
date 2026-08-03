@@ -369,8 +369,53 @@ def cmd_compare(args):
                 ws.write(r, c, dv, f_diff)
             else:
                 ws.write(r, c, dv, f_cell)
+
+    # 每个料号一个「提取明细」sheet：完整字段值 + 状态 + 溯源，与对比表同一份 Excel
+    for i, (name, vals) in enumerate(items, 1):
+        ws2 = wb.add_worksheet(f"提取明细{i}")
+        f2_head = wb.add_format({"bold": True, "bg_color": "#1F4E79", "font_color": "white", "border": 1, "align": "center", "valign": "vcenter"})
+        f2_name = wb.add_format({"bg_color": "#F2F2F2", "border": 1, "valign": "vcenter"})
+        f2_cell = wb.add_format({"border": 1, "text_wrap": True, "valign": "vcenter"})
+        f2_mut = wb.add_format({"border": 1, "font_color": "#999999", "text_wrap": True, "valign": "vcenter"})
+        ws2.write(0, 0, "参数", f2_head)
+        ws2.write(0, 1, "值", f2_head)
+        ws2.write(0, 2, "单位", f2_head)
+        ws2.write(0, 3, "容差/限定词", f2_head)
+        ws2.write(0, 4, "状态", f2_head)
+        ws2.write(0, 5, "溯源", f2_head)
+        ws2.write(0, 6, f"来源：{name}", f2_head)
+        ws2.set_column(0, 0, 22)
+        ws2.set_column(1, 5, 26)
+        ws2.freeze_panes(1, 0)
+        detail_keys = [f["key"] for f in schema["fields"]] + sorted(k for k in vals if k not in field_keys and k not in ("supplier", "part_number"))
+        r = 1
+        for key in detail_keys:
+            meta = field_meta.get(key, {})
+            v = vals.get(key, "")
+            if isinstance(v, dict):
+                has = v.get("value") is not None and v.get("value") != ""
+                ws2.write(r, 0, meta.get("name", key), f2_name)
+                ws2.write(r, 1, v.get("value") if has else "—", f2_cell if has else f2_mut)
+                ws2.write(r, 2, v.get("unit") or "—", f2_cell)
+                tol_q = " ".join(x for x in (v.get("tolerance"), v.get("qualifier")) if x)
+                ws2.write(r, 3, tol_q or "—", f2_cell)
+                ws2.write(r, 4, v.get("status") or ("有值" if has else "—"), f2_cell)
+                ev = v.get("evidence")
+                ev_txt = ""
+                if isinstance(ev, dict):
+                    if ev.get("searched_sections"):
+                        ev_txt = "检索：" + "；".join(ev["searched_sections"])
+                    elif ev.get("uncertainty_reason"):
+                        ev_txt = ev["uncertainty_reason"]
+                ws2.write(r, 5, ev_txt or "—", f2_cell)
+            else:
+                ws2.write(r, 0, meta.get("name", key), f2_name)
+                ws2.write(r, 1, v or "—", f2_cell if v else f2_mut)
+                for c in (2, 3, 4, 5):
+                    ws2.write(r, c, "—", f2_mut)
+            r += 1
     wb.close()
-    print(f"\n已生成 {out}：{len(items)} 个料号 × {len(field_keys) + len(set(extra_keys))} 项参数，黄色=存在差异，—=datasheet 未标注")
+    print(f"\n已生成 {out}：选型对比（{len(items)} 个料号 × {len(field_keys) + len(set(extra_keys))} 项参数，黄色=存在差异，—=datasheet 未标注）+ {len(items)} 个提取明细 sheet（含溯源）")
 
 
 def main():

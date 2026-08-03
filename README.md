@@ -9,7 +9,7 @@
 # 提取单份 datasheet → JSON
 python scripts/datasheet_tool.py extract sck_ntc.pdf --category ntc --part SCK10054 -o result.json
 
-# 多家供应商对比 → Excel（差异自动标黄）
+# 多家供应商对比 → 一份 Excel（选型对比表差异自动标黄 + 每料号「提取明细」sheet 含溯源）
 python scripts/datasheet_tool.py compare bourns.json junyao.json --category mov -o compare.xlsx
 ```
 
