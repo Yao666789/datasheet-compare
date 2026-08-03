@@ -1,0 +1,66 @@
+{
+  "category": "ntc",
+  "source_file": "sck_series_ntc.pdf",
+  "values": {
+    "supplier": {
+      "value": "THINKING",
+      "unit": null,
+      "page": "第1页"
+    },
+    "part_number": {
+      "value": "SCK10054",
+      "unit": null,
+      "page": "第3页"
+    },
+    "r25": {
+      "value": "5",
+      "unit": "Ω",
+      "page": "第3页"
+    },
+    "max_steady_current": {
+      "value": "4",
+      "unit": "A",
+      "page": "第3页"
+    },
+    "max_load_capacitance": {
+      "value": "470",
+      "unit": "µF",
+      "page": "第3页"
+    },
+    "b_constant": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第1页 特性",
+          "第3页 电气特性",
+          "第4-6页 电气特性",
+          "第9-12页 R-T特性曲线",
+          "第20-22页 包装"
+        ]
+      }
+    },
+    "thermal_time_constant": {
+      "value": "43",
+      "unit": "Sec.",
+      "qualifier": "Approx.",
+      "page": "第3页"
+    },
+    "max_power": {
+      "value": "2.4",
+      "unit": "W",
+      "page": "第3页"
+    },
+    "operating_temp": {
+      "value": "-40 ~ +170°C",
+      "unit": null,
+      "page": "第3页"
+    },
+    "packaging": {
+      "value": "Bulk Packing: SCK10 Standard Lead Type 200 pcs/bag, Cut Lead Type 250 pcs/bag, L kink Type 200 pcs/bag; Reel Packing: 1,500 pcs/reel; Ammo Packing: 1,300 pcs/box.",
+      "unit": null,
+      "page": "第22页"
+    }
+  }
+}

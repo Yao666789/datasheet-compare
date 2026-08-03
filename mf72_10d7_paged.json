@@ -1,0 +1,59 @@
+{
+  "category": "ntc",
+  "source_file": "mf72_shiheng_10d7.pdf",
+  "values": {
+    "supplier": {
+      "value": "南京时恒电子科技有限公司",
+      "unit": null,
+      "page": "第1页 首页"
+    },
+    "part_number": {
+      "value": "MF72 10D7",
+      "unit": null,
+      "page": "第1页 首页 产品规格"
+    },
+    "r25": {
+      "value": "10",
+      "unit": "Ω",
+      "tolerance": "±20%",
+      "page": "第3页 电气性能表 2.1"
+    },
+    "max_steady_current": {
+      "value": "0.9",
+      "unit": "A",
+      "page": "第3页 电气性能表 2.3"
+    },
+    "max_load_capacitance": {
+      "value": "100",
+      "unit": "μF",
+      "page": "第3页 电气性能表 2.4"
+    },
+    "b_constant": {
+      "value": "2800",
+      "unit": "K",
+      "tolerance": "±10%",
+      "page": "第3页 电气性能表 2.2"
+    },
+    "thermal_time_constant": {
+      "value": "27",
+      "unit": "sec",
+      "qualifier": "≤",
+      "page": "第3页 电气性能表 2.6"
+    },
+    "max_power": {
+      "value": "1",
+      "unit": "W",
+      "page": "第3页 电气性能表 2.10"
+    },
+    "operating_temp": {
+      "value": "-40 ~ 130℃",
+      "unit": null,
+      "page": "第3页 电气性能表 2.9"
+    },
+    "packaging": {
+      "value": "散装方式Bulk Type。包装袋：自封口袋(selfsealing bag) W×H＝11mm×12mm；包装盒：编编带包装盒reel packing box W×G×H＝335mm×240mm×50mm。",
+      "unit": null,
+      "page": "第6页 产品包装 6.1/6.2"
+    }
+  }
+}

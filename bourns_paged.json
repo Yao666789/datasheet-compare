@@ -1,0 +1,73 @@
+{
+  "category": "mov",
+  "source_file": "bourns_14d_demo.pdf",
+  "values": {
+    "supplier": {
+      "value": "Bourns",
+      "unit": null,
+      "page": "第1页 正文"
+    },
+    "part_number": {
+      "value": "14D471K",
+      "unit": null,
+      "page": "第1页 正文"
+    },
+    "varistor_voltage": {
+      "value": "470",
+      "unit": "V",
+      "tolerance": "±10%",
+      "page": "第1页 正文"
+    },
+    "max_continuous_voltage": {
+      "value": "300 / 385",
+      "unit": "VAC / VDC",
+      "page": "第1页 正文"
+    },
+    "max_peak_current": {
+      "value": "4500",
+      "unit": "A",
+      "page": "第1页 正文"
+    },
+    "energy_rating": {
+      "value": "125",
+      "unit": "J",
+      "page": "第1页 正文"
+    },
+    "clamping_voltage": {
+      "value": "775",
+      "unit": "V",
+      "page": "第1页 正文"
+    },
+    "power_rating": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第1页 正文",
+          "第1页 Maximum Ratings Table"
+        ]
+      }
+    },
+    "approvals": {
+      "value": "UL1449, cUL, VDE, CQC",
+      "unit": null,
+      "page": "第1页 正文"
+    },
+    "operating_temp": {
+      "value": "-40 to +85",
+      "unit": "C",
+      "page": "第1页 正文"
+    },
+    "packaging": {
+      "value": null,
+      "unit": null,
+      "status": "not_in_datasheet",
+      "evidence": {
+        "searched_sections": [
+          "第1页 正文"
+        ]
+      }
+    }
+  }
+}

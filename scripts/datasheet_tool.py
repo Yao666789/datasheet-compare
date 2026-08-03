@@ -137,6 +137,7 @@ def build_prompt(schema: dict, raw_text: str, part: str = "") -> str:
 7. 同一参数有多个条件/多行数据时，取与指定型号相符的那一行，并在 value 后括号注明测试条件。
 8. 单位写在表头时（如 "Thermal Time Constant (s)"），提取的值必须把单位找到填进 unit。
 9. 只输出一个 JSON 对象，不要 markdown 代码块包裹。
+10. 每个有值的字段必须附加 page 字段：该值在 datasheet 中的页码与位置（用于工艺核对溯源），如 {{"value": "10", "unit": "Ω", "page": "第3页 电气性能表 2.1"}}。页码必须来自原文文本（文本以 === 第N页 === 标记分页），严禁编造；实在无法确定写 "不确定"。
 
 datasheet 全文如下：
 {raw_text}"""
@@ -170,18 +171,20 @@ def call_llm(prompt: str) -> dict:
     sys.exit(f"API 连续 2 次调用失败：{last_err}")
 
 
-def _wrap_value(value: str, unit: str, tolerance: str = None, qualifier: str = None) -> dict:
+def _wrap_value(value: str, unit: str, tolerance: str = None, qualifier: str = None, page: str = None) -> dict:
     """构造 value/unit 分离的字段值（向后兼容）"""
     d = {"value": value, "unit": unit}
     if tolerance:
         d["tolerance"] = tolerance
     if qualifier:
         d["qualifier"] = qualifier
+    if page:
+        d["page"] = page
     return d
 
 
-def _display_value(v, unit_hint: str = "") -> str:
-    """将存储值转成展示字符串（dict → 'value unit'，string → 原样）"""
+def _display_value(v, unit_hint: str = "", show_page: bool = False) -> str:
+    """将存储值转成展示字符串（dict → 'value unit'，string → 原样）；show_page 时附来源页码"""
     if isinstance(v, dict):
         val = v.get("value")
         if val is None:
@@ -198,6 +201,8 @@ def _display_value(v, unit_hint: str = "") -> str:
             parts.append(u)
         if tol:
             parts.append(f"±{tol}" if not tol.startswith("±") else tol)
+        if show_page and v.get("page"):
+            parts.append(f"({v['page']})")
         return " ".join(parts)
     return str(v) if v else "—"
 
@@ -252,6 +257,8 @@ def cmd_extract(args):
                 d["tolerance"] = str(v["tolerance"]).strip()
             if v.get("qualifier"):
                 d["qualifier"] = str(v["qualifier"]).strip()
+            if v.get("page"):
+                d["page"] = str(v["page"]).strip()
             ordered[f["key"]] = d
         else:
             ordered[f["key"]] = str(v).strip()
@@ -260,7 +267,8 @@ def cmd_extract(args):
             if isinstance(v, dict):
                 ordered[k] = _wrap_value(
                     str(v.get("value", "")).strip(),
-                    str(v.get("unit", "")).strip()
+                    str(v.get("unit", "")).strip(),
+                    page=str(v.get("page", "")).strip()
                 )
             else:
                 ordered[k] = str(v).strip()
@@ -317,9 +325,10 @@ def cmd_compare(args):
         with open(p, encoding="utf-8-sig") as fp:
             d = json.load(fp)
         vals = d.get("values", d)
-        col_name = vals.get("part_number") or Path(p).stem
-        if vals.get("supplier"):
-            col_name = f'{vals["supplier"]} {col_name}'.strip()
+        col_name = _display_value(vals.get("part_number"), "") or Path(p).stem
+        sup = _display_value(vals.get("supplier"), "")
+        if sup:
+            col_name = f"{sup} {col_name}".strip()
         items.append((col_name, vals))
 
     field_keys = [f["key"] for f in schema["fields"] if f["key"] not in ("supplier", "part_number")]
@@ -334,7 +343,9 @@ def cmd_compare(args):
         name = field_meta.get(key, {}).get("name", key)
         unit_hint = field_meta.get(key, {}).get("unit", "")
         row = [name + (f"({unit_hint})" if unit_hint else "")]
-        row += [_display_value(vals.get(key, ""), unit_hint) or "—" for _, vals in items]
+        values = [vals.get(key, "") for _, vals in items]
+        has_diff = len({norm(v) for v in values if v}) > 1
+        row += [_display_value(v, unit_hint, show_page=has_diff) or "—" for v in values]
         print("| " + " | ".join(row) + " |")
 
     # 生成 Excel：参数行 × 料号列，差异高亮
@@ -362,7 +373,7 @@ def cmd_compare(args):
         present = {norm(v) for v in values if v}
         has_diff = len(present) > 1
         for c, v in enumerate(values, 1):
-            dv = _display_value(v, field_meta.get(key, {}).get("unit", ""))
+            dv = _display_value(v, field_meta.get(key, {}).get("unit", ""), show_page=has_diff)
             if not v:
                 ws.write(r, c, "—", f_na)
             elif has_diff:
@@ -381,11 +392,12 @@ def cmd_compare(args):
         ws2.write(0, 1, "值", f2_head)
         ws2.write(0, 2, "单位", f2_head)
         ws2.write(0, 3, "容差/限定词", f2_head)
-        ws2.write(0, 4, "状态", f2_head)
-        ws2.write(0, 5, "溯源", f2_head)
-        ws2.write(0, 6, f"来源：{name}", f2_head)
+        ws2.write(0, 4, "页码", f2_head)
+        ws2.write(0, 5, "状态", f2_head)
+        ws2.write(0, 6, "溯源", f2_head)
+        ws2.write(0, 7, f"来源：{name}", f2_head)
         ws2.set_column(0, 0, 22)
-        ws2.set_column(1, 5, 26)
+        ws2.set_column(1, 6, 26)
         ws2.freeze_panes(1, 0)
         detail_keys = [f["key"] for f in schema["fields"]] + sorted(k for k in vals if k not in field_keys and k not in ("supplier", "part_number"))
         r = 1
@@ -399,7 +411,8 @@ def cmd_compare(args):
                 ws2.write(r, 2, v.get("unit") or "—", f2_cell)
                 tol_q = " ".join(x for x in (v.get("tolerance"), v.get("qualifier")) if x)
                 ws2.write(r, 3, tol_q or "—", f2_cell)
-                ws2.write(r, 4, v.get("status") or ("有值" if has else "—"), f2_cell)
+                ws2.write(r, 4, v.get("page") or "—", f2_cell if has else f2_mut)
+                ws2.write(r, 5, v.get("status") or ("有值" if has else "—"), f2_cell)
                 ev = v.get("evidence")
                 ev_txt = ""
                 if isinstance(ev, dict):
@@ -407,11 +420,11 @@ def cmd_compare(args):
                         ev_txt = "检索：" + "；".join(ev["searched_sections"])
                     elif ev.get("uncertainty_reason"):
                         ev_txt = ev["uncertainty_reason"]
-                ws2.write(r, 5, ev_txt or "—", f2_cell)
+                ws2.write(r, 6, ev_txt or "—", f2_cell)
             else:
                 ws2.write(r, 0, meta.get("name", key), f2_name)
                 ws2.write(r, 1, v or "—", f2_cell if v else f2_mut)
-                for c in (2, 3, 4, 5):
+                for c in (2, 3, 4, 5, 6):
                     ws2.write(r, c, "—", f2_mut)
             r += 1
     wb.close()
