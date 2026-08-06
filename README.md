@@ -5,6 +5,35 @@
 [![Python](https://img.shields.io/badge/Python-3.11+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
+## V2 通用提取（推荐）
+
+任意规格书直接丢，全参数提取 + 归一化对齐 + 对比：
+
+```bash
+# 1. 提取：任意规格书 → 全参数 JSON（页码溯源 + 中英双语参数名）
+python scripts/datasheet_v2.py extract 任意规格书.pdf [--category ntc] -o result.json
+
+# 2. 归一化：不同厂商同一参数自动对齐（词典为主 + LLM 兜底）
+python scripts/datasheet_v2.py normalize result.json [-o result.norm.json] [--llm-fallback]
+
+# 3. 对比：多家 → 一份 Excel（差异标黄 + 页码）
+python scripts/datasheet_v2.py compare a.norm.json b.norm.json -o compare.xlsx
+```
+
+参数本体 `ontology/params.yaml`（60+ 参数，中英别名）：提取出的新参数自动生成入典建议（`ontology/suggestions.yaml`），审核后入典，词典越跑越准。
+
+### 能力边界（实测声明）
+
+| 场景 | 适用模式 | 说明 |
+|---|---|---|
+| 单型号 / 单表规格书 | V2 通用提取 ✅ | 覆盖率 90.9~100%，页码溯源 100% |
+| 零 ontology 新品类（二极管等） | V2 通用提取 ✅ | 1N4007 实测 91.7%，核心参数全中 |
+| 多列系列特性表（每行多型号多列+容差） | **v1 品类模式复核** ⚠ | 值归列不稳（如 TDK B82794C0 电感），unit 量级校验器自动标 ⚠，建议 v1 schema 模式提取对照 |
+
+这是设计边界不是缺陷：V2 管"通用识别"，v1 管"品类精准"，两模式并存。
+
+## v1 品类模式（兼容保留）
+
 ```bash
 # 提取单份 datasheet → JSON
 python scripts/datasheet_tool.py extract sck_ntc.pdf --category ntc --part SCK10054 -o result.json
@@ -47,6 +76,25 @@ python scripts/datasheet_tool.py compare bourns.json junyao.json --category mov 
 | 共模电感 | 电感量/额定电流/DCR/耐压 | ✅ 已验证 |
 | CBB 电容 | dv/dt/耐压余量 | 📋 计划中 |
 
+## V2 实测成绩单（2026-08-06，双指标）
+
+**已知参数覆盖率**（ontology 品类参考参数中提取/合理拒绝比例）+ **页码溯源率**（提取参数带页码比例，零幻觉代理指标）。
+
+| Datasheet | 品类 | 覆盖率 | 页码溯源 | 备注 |
+|---|---|---|---|---|
+| MF72-10D7（时恒） | NTC | 100%（26/26） | 100% | 10 个 v1 字段全中 + 17 个新参数 |
+| MF72（Cantherm） | NTC | 100%（26/26） | 100% | B 值正确拒绝（厂商不标） |
+| SCK10054（兴勤） | NTC | 96.2%（25/26） | 100% | 额定电压原文确无，LLM 未主动标注 |
+| F863H（KEMET） | X2 | 90.9%（20/22） | 100% | 新增 msl/hs_code 未覆盖，材料结构细节已提 |
+| R52（KEMET） | X2 | 90.9%（20/22） | 100% | 同上 |
+| B82794C0（TDK） | CMC | 100%（17/17） | 100% | 漏感 1300nH 正确区分；主电感值归列不稳→v1 复核 |
+| **1N4007（Diotec）** | **二极管** | **91.7%（55/60）** | 100% | **零 ontology 基础新品类**，VF/trr/IFSM 全中 |
+| 14D 系列（Bourns，1 页 demo） | MOV | 不计 | 100% | 演示件，不纳入正式成绩 |
+
+- **8 份实测，正式 7 份全部 ≥90.9%**，页码溯源率 198/198 = **100%**
+- **零幻觉抽查**：核心参数逐条回原文核对一致（时恒 R25=10Ω±20%、B 值 2800K；1N4007 VF<1.1V、trr=1500ns、IFSM=30A）；唯一发现 CMC 电感字段错位（unit 校验器自动标 ⚠ 拦截，未静默通过）
+- 新品类实测（二极管）证明零 ontology 基础可用，12 个二极管参数已反哺入典
+
 ## 实测成绩单（2026-08-02）
 
 5 份 datasheet 实测，**4 份为首次跑（换厂商/换元件类型），1 份重跑**。所有空值都有溯源标注，零编造。
@@ -63,12 +111,40 @@ python scripts/datasheet_tool.py compare bourns.json junyao.json --category mov 
 - **B 值结论翻案**：实测时恒 MF72 规格书**标 B 值**（B25/50=2800K±10%），Cantherm/兴勤 SCK 不标 → schema 已按"厂商而异"修正。
 - **能力边界**：扫描件 datasheet（无文本层）会被工具拒绝而非瞎编——如时恒 MF72-20D15（图片型 PDF）直接报"疑似扫描件，请先 OCR"。
 
-## 安装
+## 快速部署（5 步）
 
 ```bash
-pip install pdfplumber openai pyyaml xlsxwriter
+# 1. 拿代码
+git clone https://github.com/Yao666789/datasheet-compare.git
+cd datasheet-compare
+
+# 2. 装依赖（仅 4 个）
+pip install -r requirements.txt
+
+# 3. 配 LLM 密钥（DeepSeek，几块钱；OpenAI 兼容接口可用 LLM_BASE_URL 切换）
 export DEEPSEEK_API_KEY=sk-your-key
-python scripts/datasheet_tool.py extract your_datasheet.pdf --category mov
+
+# 4. 跑（V2 通用提取 / 对比）
+python scripts/datasheet_v2.py extract your_datasheet.pdf -o result.json
+python scripts/datasheet_v2.py normalize result.json -o result.norm.json
+python scripts/datasheet_v2.py compare a.norm.json b.norm.json -o compare.xlsx
+
+# 5. 挂载为 skill（AI 平台）：把本仓库放入平台的 skills 目录即可（SKILL.md 是入口）
+```
+
+项目结构：
+
+```
+datasheet-compare/
+├── SKILL.md              # skill 入口（Hermes/Claude 等 AI 平台直接挂载）
+├── ontology/params.yaml  # 参数本体：36+ 参数中英别名词典（归一化核心）
+├── ontology/suggestions.md  # 新参数入典建议（审核后移入 params.yaml）
+├── scripts/
+│   ├── datasheet_v2.py      # V2：通用提取 + 归一化 + 对比（推荐）
+│   └── datasheet_tool.py    # v1：品类 schema 严格提取（兼容保留）
+├── schemas/              # 品类参数模板（v1 用，V2 作提示参考）
+├── requirements.txt
+└── README.md
 ```
 
 ## 谁做的

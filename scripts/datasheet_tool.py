@@ -22,6 +22,7 @@ import json
 import os
 import re
 import sys
+import time
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -159,16 +160,21 @@ def call_llm(prompt: str) -> dict:
         response_format={"type": "json_object"},
         temperature=0.1,
     )
+    # 指数退避重试（Hermes 部署需求，2026-08-05 网络抖动/Connection error 为需求来源）：
+    # 共 4 次尝试，间隔 2s/4s/8s——网络抖动或 API 限流时的最便宜兜底
     last_err = None
-    for attempt in range(2):  # 失败重试 1 次——网络抖动/演示现场的最便宜兜底
+    for attempt in range(4):
         try:
             resp = client.chat.completions.create(**kwargs)
             content = resp.choices[0].message.content
             return json.loads(content)
         except Exception as e:
             last_err = e
-            print(f"API 调用失败（第 {attempt + 1} 次）：{e}", file=sys.stderr)
-    sys.exit(f"API 连续 2 次调用失败：{last_err}")
+            wait = 2 ** attempt
+            print(f"API 调用失败（第 {attempt + 1} 次）：{e}；{wait}s 后重试", file=sys.stderr)
+            if attempt < 3:
+                time.sleep(wait)
+    sys.exit(f"API 连续 4 次调用失败：{last_err}")
 
 
 def _wrap_value(value: str, unit: str, tolerance: str = None, qualifier: str = None, page: str = None) -> dict:

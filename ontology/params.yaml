@@ -1,0 +1,363 @@
+# datasheet-compare V2 参数本体（首批 2026-08-05）
+#
+# 格式说明：
+#   key:        canonical 英文名（机器对齐用，不可重复）
+#   zh:         中文标注名（Excel/人读展示用）
+#   category:   常见品类标签（mov/ntc/x2/cmc/cbb，可多值；仅作提示参考）
+#   unit_hint:  常见单位（提示用，不强制）
+#   aliases:    原始参数名别名（中/英/厂商惯用叫法；归一化时小写+去空格匹配）
+#
+# 来源：8 份实测规格书（时恒 MF72 / Cantherm MF72 / 兴勤 SCK / Bourns 14D / 君耀 14D /
+#       KEMET F863H / KEMET R52 / TDK B82794C0）+ 预置高频参数。
+
+# ============ 通用 ============
+supplier:
+  zh: 厂商
+  category: [mov, ntc, x2, cmc, cbb]
+  aliases: [厂商, 供应商, 生产厂家, 制造商, 厂名, Manufacturer, Supplier, Brand, Maker]
+
+part_number:
+  zh: 料号
+  category: [mov, ntc, x2, cmc, cbb]
+  aliases: [料号, 型号, 产品型号, 品名, 订购型号, Part Number, Part No, P/N, PN, Model, Model No, Ordering Code, Order Code]
+
+series:
+  zh: 系列
+  category: [mov, ntc, x2, cmc, cbb]
+  aliases: [系列, 产品系列, Series, Series Name, Type Series]
+
+operating_temp:
+  zh: 工作温度
+  category: [mov, ntc, x2, cmc, cbb]
+  unit_hint: °C
+  aliases: [工作温度, 工作温度范围, 使用温度范围, 操作温度, Operating Temperature, Operating Temp, Operating Temp Range, Working Temperature, Op. Temp]
+
+storage_temp:
+  zh: 存贮温度
+  category: [mov, ntc, x2, cmc, cbb]
+  unit_hint: °C
+  aliases: [存贮温度, 存储温度, 储存温度, Storage Temperature, Storage Temp]
+
+packaging:
+  zh: 包装
+  category: [mov, ntc, x2, cmc, cbb]
+  aliases: [包装, 包装方式, 封装形式, 包装形式, Packaging, Packing, Package, Packing Type, Packing Method]
+
+approvals:
+  zh: 认证
+  category: [mov, ntc, x2, cmc, cbb]
+  aliases: [认证, 安规认证, 安全认证, 证书, Approvals, Approval, Safety Approvals, Certifications, Standards Compliance]
+
+dimension:
+  zh: 外形尺寸
+  category: [mov, ntc, x2, cmc, cbb]
+  unit_hint: mm
+  aliases: [外形尺寸, 尺寸, 尺寸规格, 结构尺寸, Dimensions, Dimension, Body Size, D H, Outline Dimension]
+
+# ============ NTC 热敏电阻 ============
+r25:
+  zh: 零功率电阻值(25℃)
+  category: [ntc]
+  unit_hint: Ω
+  aliases: [R25, R 25, 零功率电阻值, 零功率电阻, 标称电阻, 25℃电阻, 25度电阻, 常温电阻, Resistance at 25℃, Resistance at 25°C, Zero Power Resistance, Resistance, R at 25°C]
+
+max_steady_current:
+  zh: 最大稳态电流
+  category: [ntc]
+  unit_hint: A
+  aliases: [最大稳态电流, 稳态电流, 最大连续电流, Max Steady State Current, Maximum Steady State Current, Steady State Current, Max Continuous Current, 稳态工作电流]
+
+max_load_capacitance:
+  zh: 最大负载电容
+  category: [ntc]
+  unit_hint: μF
+  aliases: [最大负载电容, 负载电容, 最大电容负载, Max Load Capacitance, Maximum Load Capacitance, Load Capacitance, Max Switching Capacitance]
+
+b_constant:
+  zh: B值
+  category: [ntc]
+  unit_hint: K
+  aliases: [B值, B 值, B25/50, B25 50, B(25/50), 材料常数, 热敏指数, 电阻温度系数, B Value, B Constant, Beta Value, Beta Constant]
+
+thermal_time_constant:
+  zh: 热时间常数
+  category: [ntc]
+  unit_hint: sec
+  aliases: [热时间常数, Thermal Time Constant, Time Constant, 时间常数]
+
+power_rating:
+  zh: 额定功率
+  category: [ntc, mov]
+  unit_hint: W
+  aliases: [额定功率, 最大功率, 功率, 功率耗散, 耗散功率, Rated Power, Power Rating, Maximum Power, Max Power, Power Dissipation, Rated Power Dissipation]
+
+# ============ MOV 压敏电阻 ============
+varistor_voltage:
+  zh: 压敏电压
+  category: [mov]
+  unit_hint: V
+  aliases: [压敏电压, 压敏电阻电压, 标称压敏电压, 压敏电压UN, Varistor Voltage, Variator Voltage, UN, VN, Breakdown Voltage, 击穿电压]
+
+max_continuous_voltage:
+  zh: 最大连续工作电压
+  category: [mov]
+  unit_hint: VAC/VDC
+  aliases: [最大连续工作电压, 最大连续电压, 连续工作电压, 最大连续交流直流电压, Maximum Continuous Voltage, Max Continuous Voltage, Max AC DC Voltage, Maximum AC DC Voltage, MCOV]
+
+max_peak_current:
+  zh: 最大峰值电流(通流量)
+  category: [mov]
+  unit_hint: A
+  aliases: [最大峰值电流, 峰值电流, 通流量, 最大通流量, 浪涌电流, 最大冲击电流, 冲击电流, 耐冲击电流, Maximum Peak Current, Max Peak Current, Peak Current, Maximum Surge Current, Max Surge Current, Surge Current, Max Withstanding Surge]
+
+energy_rating:
+  zh: 能量耐量
+  category: [mov]
+  unit_hint: J
+  aliases: [能量耐量, 最大能量, 能量, 耐受能量, 通流能量, 额定能量, Energy Rating, Maximum Energy, Energy, Max Energy, Transient Energy]
+
+clamping_voltage:
+  zh: 限制电压
+  category: [mov]
+  unit_hint: V
+  aliases: [限制电压, 钳位电压, 残压, Clamping Voltage, Clamp Voltage, Maximum Clamping Voltage, Max Clamping Voltage]
+
+leakage_current:
+  zh: 漏电流
+  category: [mov]
+  unit_hint: μA
+  aliases: [漏电流, 最大漏电流, 直流漏电流, Leakage Current, Leak Current, Maximum Leakage Current, Max Leakage Current]
+
+# ============ X2 安规电容 ============
+capacitance:
+  zh: 电容量
+  category: [x2, cbb]
+  unit_hint: μF
+  aliases: [电容量, 电容, 容量, 标称电容, 额定电容, Capacitance, Capacitance Value, Rated Capacitance, Nominal Capacitance]
+
+tolerance:
+  zh: 容差
+  category: [x2, cbb]
+  unit_hint: "%"
+  aliases: [容差, 允许偏差, 偏差, 电容容差, 容量偏差, Tolerance, Capacitance Tolerance, Tolerance Range]
+
+rated_voltage:
+  zh: 额定电压
+  category: [x2, cbb, ntc]
+  unit_hint: VAC
+  aliases: [额定电压, 额定交流电压, 额定工作电压, 工作电压, Rated Voltage, Rated AC Voltage, Rated Working Voltage, Working Voltage, AC Rated Voltage]
+
+safety_class:
+  zh: 安规等级
+  category: [x2]
+  aliases: [安规等级, 安全等级, 安全类别, 安规类别, Safety Class, Safety Classification, Safety Grade, Safety Category, Class X]
+
+climatic_category:
+  zh: 气候类别
+  category: [x2]
+  aliases: [气候类别, 气候等级, 气候类型, Climatic Category, Climatic Class, Climatic Group]
+
+thb_rating:
+  zh: 湿热等级
+  category: [x2]
+  aliases: [湿热等级, 湿热试验等级, THB, THB Rating, THB Grade, Temperature Humidity Bias]
+
+dissipation_factor:
+  zh: 散逸因数
+  category: [x2, cbb]
+  unit_hint: "%"
+  aliases: [散逸因数, 损耗角正切, 损耗因数, 损耗系数, Dissipation Factor, DF, tan δ, Tangent of Loss Angle, Loss Tangent]
+
+flame_rating:
+  zh: 阻燃等级
+  category: [x2]
+  aliases: [阻燃等级, 燃烧等级, 可燃性等级, Flame Rating, Flammability Rating, Flammability Class, Flame Class]
+
+insulation_resistance:
+  zh: 绝缘电阻
+  category: [x2, ntc]
+  unit_hint: MΩ
+  aliases: [绝缘电阻, 绝缘阻抗, Insulation Resistance, Insulating Resistance, IR]
+
+# ============ CMC 共模电感 ============
+inductance:
+  zh: 电感量
+  category: [cmc]
+  unit_hint: mH
+  aliases: [电感量, 电感, 标称电感, 额定电感, 主电感, Inductance, Nominal Inductance, Rated Inductance, L]
+
+stray_inductance:
+  zh: 漏感
+  category: [cmc]
+  unit_hint: nH
+  aliases: [漏感, 寄生电感, 杂散电感, 残余电感, L stray, L stray typ, Stray Inductance, Leakage Inductance, Residual Inductance, L S]
+
+impedance:
+  zh: 阻抗
+  category: [cmc]
+  unit_hint: Ω
+  aliases: [阻抗, 共模阻抗, Impedance, Common Mode Impedance, Z]
+
+rated_current:
+  zh: 额定电流
+  category: [cmc]
+  unit_hint: A/mA
+  aliases: [额定电流, 最大工作电流, Rated Current, Max Rated Current, Maximum Rated Current, Working Current]
+
+dcr:
+  zh: 直流电阻
+  category: [cmc, cbb]
+  unit_hint: mΩ
+  aliases: [直流电阻, 铜阻, 绕组电阻, DC Resistance, DCR, Resistance DC, Winding Resistance]
+
+hipot:
+  zh: 耐压
+  category: [cmc, x2]
+  unit_hint: V
+  aliases: [耐压, 绝缘耐压, 介电强度, 抗电强度, 耐压测试, Hipot, Test Voltage, Voltage Proof, Dielectric Strength, Withstand Voltage, Hi Pot]
+
+insertion_loss:
+  zh: 插入损耗
+  category: [cmc]
+  unit_hint: dB
+  aliases: [插入损耗, Insertion Loss, IL, Insertion Loss Curve]
+
+# ============ CBB 电容（预置，计划中） ============
+dv_dt:
+  zh: dv/dt耐量
+  category: [cbb]
+  unit_hint: V/μs
+  aliases: [dv/dt, dv dt, 电压变化率, 承受电压变化率, 耐dv/dt, dv/dt Rating, Rate of Voltage Rise]
+
+# ============ 二极管（2026-08-06 Diotec 1N4007 实测入典，新品类种子） ============
+forward_voltage:
+  zh: 正向电压
+  category: [diode]
+  unit_hint: V
+  aliases: [正向电压, 正向压降, 导通压降, Forward Voltage, VF, V F, Forward Voltage Drop]
+
+repetitive_peak_reverse_voltage:
+  zh: 重复峰值反向电压
+  category: [diode]
+  unit_hint: V
+  aliases: [重复峰值反向电压, 反向重复峰值电压, 最高反向工作电压, Repetitive Peak Reverse Voltage, VRRM, VRM, Reverse Voltage, Peak Reverse Voltage, Max Reverse Voltage]
+
+surge_peak_reverse_voltage:
+  zh: 浪涌峰值反向电压
+  category: [diode]
+  unit_hint: V
+  aliases: [浪涌峰值反向电压, Surge Peak Reverse Voltage, VRSM]
+
+repetitive_peak_forward_current:
+  zh: 重复峰值正向电流
+  category: [diode]
+  unit_hint: A
+  aliases: [重复峰值正向电流, 峰值正向电流, Repetitive Peak Forward Current, IFRM]
+
+reverse_recovery_time:
+  zh: 反向恢复时间
+  category: [diode]
+  unit_hint: ns
+  aliases: [反向恢复时间, 恢复时间, Reverse Recovery Time, trr, T rr, Recovery Time]
+
+junction_capacitance:
+  zh: 结电容
+  category: [diode]
+  unit_hint: pF
+  aliases: [结电容, Junction Capacitance, CJ, Cj, CJ]
+
+i2t:
+  zh: 熔断积分
+  category: [diode, mov]
+  unit_hint: A²s
+  aliases: [熔断积分, 电流平方时间积, Rating for Fusing, I2t, I²t, i2t]
+
+thermal_resistance_junction_ambient:
+  zh: 热阻（结-环境）
+  category: [diode]
+  unit_hint: K/W
+  aliases: [热阻结到环境, 结环境热阻, 热阻结环境, Thermal Resistance Junction to Ambient, RthJA, Rth J A]
+
+thermal_resistance_junction_leads:
+  zh: 热阻（结-引脚）
+  category: [diode]
+  unit_hint: K/W
+  aliases: [热阻结到引脚, 结引脚热阻, Thermal Resistance Junction to Leads, RthJL, Rth J L]
+
+quality_grade:
+  zh: 质量等级
+  category: [diode]
+  aliases: [质量等级, 等级, 品质等级, Quality Grade, Grade, Quality Level]
+
+weight:
+  zh: 重量
+  category: [diode, cmc, mov]
+  unit_hint: g
+  aliases: [重量, Weight, Mass]
+
+msl:
+  zh: 湿度敏感等级
+  category: [diode, x2]
+  aliases: [湿度敏感等级, 湿敏等级, MSL, Moisture Sensitivity Level]
+
+hs_code:
+  zh: 海关编码
+  category: [diode, mov, x2]
+  aliases: [海关编码, 海关HS编码, HS Code, HS 编码, Customs Code]
+
+# ============ NTC 补充（2026-08-05 时恒 MF72 实测入典） ============
+thermal_dissipation_coefficient:
+  zh: 耗散系数
+  category: [ntc]
+  unit_hint: mW/℃
+  aliases: [耗散系数, Thermal dissipation Coefficient, Dissipation Coefficient]
+
+r_t_curve:
+  zh: 阻温特性
+  category: [ntc]
+  aliases: [阻温特性, R&T-table, R-T特性曲线, R-T Curve]
+
+voltage_current_curve:
+  zh: 伏安曲线
+  category: [ntc, mov]
+  aliases: [伏安曲线, V-I曲线, curve of voltage and current, V-I Curve]
+
+wire_material:
+  zh: 线材
+  category: [ntc, mov]
+  aliases: [线材, 引线材料, wire material, Wire Material, Lead Material]
+
+encapsulation_material:
+  zh: 封装材料
+  category: [ntc, mov]
+  aliases: [封装材料, 封装, 包封材料, encapsulation, Encapsulation, Coating Material]
+
+storage_humidity:
+  zh: 存贮湿度
+  category: [ntc, x2, cmc]
+  unit_hint: "%RH"
+  aliases: [存贮湿度, 存储湿度, 储存湿度, storage humidity, Storage Humidity]
+
+storage_period:
+  zh: 贮存期
+  category: [ntc, x2]
+  unit_hint: year
+  aliases: [贮存期, 保质期, 储存期限, storage period, Storage Period, Shelf Life]
+
+soldering_temperature:
+  zh: 焊接温度
+  category: [ntc, mov]
+  unit_hint: ℃
+  aliases: [焊接温度, soldering temperature, Solder Temperature]
+
+soldering_time:
+  zh: 焊接时间
+  category: [ntc, mov]
+  unit_hint: sec
+  aliases: [焊接时间, soldering time, Solder Time]
+
+soldering_distance:
+  zh: 焊接距离
+  category: [ntc, mov]
+  unit_hint: mm
+  aliases: [焊接处距包封头部距离, soldering distance, Solder Distance]

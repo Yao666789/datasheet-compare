@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+
+# 测试/回归产物
+v2_regression/
+v2_test_*.json
+demo_*.json
+demo_*.xlsx
+
+# 对比表输出（生成物，不入库）
+*.xlsx
+!examples/*.json
