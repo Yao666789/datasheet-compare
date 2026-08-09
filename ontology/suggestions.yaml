@@ -1,9 +1,2 @@
 # 新参数入典建议（人工审核后移入 params.yaml；重复建议已自动去重）
-# 2026-08-09：TVS 品类 22 条建议全部审核入典（→ params.yaml "TVS 瞬态抑制二极管" 段），队列已清空。
-#   合并/改名记录：
-#     - terminal_finish            → 并入 lead_finish（端子表面处理 = 引脚镀层）
-#     - peak_pulse_power_single_die / peak_pulse_power_stacked_die → 合并为 peak_pulse_power
-#     - temp_coefficient_of_vbr    → temperature_coefficient_of_breakdown_voltage
-#     - resistance_to_solder_heat  → solder_heat_resistance
-#     - biased_temp_humidity       → 并入 thb_rating（偏置温湿度 = THB）
 suggestions: []

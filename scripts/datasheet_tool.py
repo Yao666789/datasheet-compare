@@ -36,8 +36,13 @@ CATEGORY_FILES = {
     "cbb": "cbb_capacitor.yaml",
 }
 
-LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "https://api.deepseek.com")
-LLM_MODEL = os.environ.get("LLM_MODEL", "deepseek-v4-flash")  # deepseek-chat 已于 2026-07-24 弃用
+# LLM 配置改为 call_llm 内实时读取（二轮圆桌 #6：模块级绑定会缓存旧值，长驻进程改配置不生效）
+_LLM_CALLS = {"n": 0}  # 二轮圆桌 #7：本次运行 API 调用计数（成本可观测）
+
+
+def llm_call_count() -> int:
+    """返回本次进程累计发起的 LLM API 请求次数"""
+    return _LLM_CALLS["n"]
 MAX_CHARS_HEAD = 60000  # 前段：覆盖电气参数
 MAX_CHARS_TAIL = 20000  # 后段：抓 packaging / mechanical / ordering info
 MIN_TEXT_CHARS = 500  # 低于此长度判定为扫描件（无文本层）
@@ -153,13 +158,16 @@ def call_llm(prompt: str) -> dict:
         os.environ.pop(k, None)
     os.environ["NO_PROXY"] = "*"  # 关键：urllib/httpx 读这个决定不走代理
     from openai import OpenAI
-    client = OpenAI(api_key=api_key, base_url=LLM_BASE_URL, timeout=60)
+    base_url = os.environ.get("LLM_BASE_URL", "https://api.deepseek.com")  # 实时读，支持部署时切换百炼等
+    model = os.environ.get("LLM_MODEL", "deepseek-v4-flash")  # deepseek-chat 已于 2026-07-24 弃用
+    client = OpenAI(api_key=api_key, base_url=base_url, timeout=60)
     kwargs = dict(
-        model=LLM_MODEL,
+        model=model,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
         temperature=0.1,
     )
+    _LLM_CALLS["n"] += 1  # 二轮圆桌 #7：每次实际请求计数
     # 指数退避重试（Hermes 部署需求，2026-08-05 网络抖动/Connection error 为需求来源）：
     # 共 4 次尝试，间隔 2s/4s/8s——网络抖动或 API 限流时的最便宜兜底
     last_err = None

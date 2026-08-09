@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from datasheet_tool import (  # 复用 v1 的 PDF 解析 / LLM 调用 / 规范化
     MIN_TEXT_CHARS,
     call_llm,
+    llm_call_count,
     norm,
     pdf_to_text,
 )
@@ -379,6 +380,99 @@ def write_suggestions(new_params: list, out_path: Path, source: str = "") -> Non
     print(f"新参数建议已写入 {out_path.name}（{added} 条新增，累计 {len(items)} 条，待人工审核入典）")
 
 
+def cmd_lint_ontology(args):
+    """二轮圆桌 #5：词典健康检查——重别名 / key 命名 / 空 aliases / 未知品类标签。
+    是"唯一能安全改词典的护栏"：增删参数前先跑一遍，防先到先得静默覆盖。"""
+    ont = load_ontology()
+    errors = []
+    valid_cats = {"mov", "ntc", "x2", "cmc", "cbb", "diode", "tvs"}
+    # 1. key 命名：snake_case
+    for k in ont:
+        if not re.fullmatch(r"[a-z][a-z0-9_]*", k):
+            errors.append(f"key 不合 snake_case：{k!r}")
+    # 2. aliases 空列表 / 空字符串
+    for k, m in ont.items():
+        al = m.get("aliases") or []
+        if not al:
+            errors.append(f"{k}: aliases 为空")
+        else:
+            for a in al:
+                if not str(a).strip():
+                    errors.append(f"{k}: 存在空别名")
+    # 3. 重别名（norm_key 后，与 build_ont_lookup 同口径——先到先得静默覆盖）
+    seen = {}
+    for k, m in ont.items():
+        for a in [k] + (m.get("aliases") or []):
+            na = norm_key(a)
+            if not na:
+                continue
+            if na in seen and seen[na] != k:
+                errors.append(f"重别名「{a}」（{na}）同时属于 {seen[na]} 与 {k}——先到先得会静默覆盖")
+            else:
+                seen[na] = k
+    # 4. category 标签合法性（仅作提示参考，但写错字会静默失效）
+    for k, m in ont.items():
+        for c in m.get("category") or []:
+            if c not in valid_cats:
+                errors.append(f"{k}: 未知品类标签 {c!r}")
+    if errors:
+        print(f"❌ ontology 检查出 {len(errors)} 个问题：")
+        for e in errors:
+            print(f"  - {e}")
+        sys.exit(1)
+    print(f"✅ ontology 健康：{len(ont)} 个 key，无重别名/命名/空别名/品类问题")
+
+
+def cmd_promote(args):
+    """二轮圆桌 #8：suggestions.yaml 审核通过的条目一键入典 params.yaml（防手动复制 YAML 出错）。
+    用法：promote [key ...]（缺省 = 全部）；入典后自动从建议队列移除。"""
+    import yaml
+    ont = load_ontology()
+    sug_path = ONTOLOGY_DIR / "suggestions.yaml"
+    if not sug_path.exists():
+        print("suggestions.yaml 不存在，无建议可 promote")
+        return
+    with open(sug_path, encoding="utf-8-sig") as f:
+        sug = yaml.safe_load(f) or {}
+    items = list(sug.get("suggestions", []) or [])
+    keys = args.keys or [it.get("key") for it in items if it.get("key")]
+    if not keys:
+        print("建议队列为空，无可 promote 条目")
+        return
+    idx = {it.get("key"): it for it in items if it.get("key")}
+    blocks, promoted = [], []
+    for k in keys:
+        it = idx.get(k)
+        if it is None:
+            print(f"⚠️ 建议队列中无「{k}」，跳过")
+            continue
+        if k in ont:
+            print(f"⚠️ {k} 已在 params.yaml 中，跳过")
+            continue
+        if not re.fullmatch(r"[a-z][a-z0-9_]*", k):
+            print(f"⚠️ {k} 不合 snake_case，跳过（改名后再 promote）")
+            continue
+        al = [str(a).strip() for a in (it.get("aliases") or []) if str(a).strip()]
+        if not al:
+            print(f"⚠️ {k} 无有效 aliases，跳过")
+            continue
+        zh = str(it.get("zh", "")).strip()
+        blocks.append(f"{k}:\n  zh: {zh or '(待补中文名)'}\n  aliases: [{', '.join(al)}]\n")
+        promoted.append(k)
+    if not blocks:
+        return
+    with open(ONTOLOGY_FILE, "a", encoding="utf-8") as f:
+        f.write("\n")
+        for b in blocks:
+            f.write(b)
+    remaining = [it for it in items if it.get("key") not in promoted]
+    with open(sug_path, "w", encoding="utf-8") as f:
+        f.write("# 新参数入典建议（人工审核后移入 params.yaml；重复建议已自动去重）\n")
+        yaml.dump({"suggestions": remaining}, f, allow_unicode=True, sort_keys=False)
+    print(f"✅ 已 promote {len(promoted)} 条入 params.yaml：{', '.join(promoted)}")
+    print("下一步：重跑相关 normalize 核对命中；需要时可给新参数补 category/unit_hint")
+
+
 def cmd_normalize(args):
     ont = load_ontology()
     with open(args.json, encoding="utf-8-sig") as f:
@@ -461,6 +555,9 @@ def cmd_normalize(args):
         json.dump(result, f, ensure_ascii=False, indent=2)
     n_hit = sum(1 for p in aligned if p.get("key"))
     print(f"已写入 {out}：{len(aligned)} 个已对齐（词典/LLM）+ {len(unknown)} 个未命中待人工处理")
+    # 二轮圆桌 #7：成本可观测——本次 API 调用次数
+    if llm_call_count():
+        print(f"本次共调用 LLM {llm_call_count()} 次")
     if unknown:
         for p in unknown:
             print(f"  未命中：key={p.get('key')} zh={p.get('zh')} original={p.get('original')}")
@@ -688,6 +785,9 @@ def cmd_extract(args):
     n_absent = sum(1 for p in params if p.get("status") == "not_in_datasheet")
     n_unc = sum(1 for p in params if p.get("status") == "extraction_uncertain")
     print(f"已写入 {out}：识别 {len(params)} 个参数（{n_val} 有值 / {n_absent} 原文确无 / {n_unc} 不确定）")
+    # 二轮圆桌 #7：成本可观测——本次 API 调用次数
+    if llm_call_count():
+        print(f"本次共调用 LLM {llm_call_count()} 次")
     if args.category:
         keys = {p.get("key") for p in params}
         missed = [k for k in ont if ont[k]["category"] and args.category in ont[k]["category"] and k not in keys]
@@ -717,6 +817,13 @@ def main():
     c.add_argument("jsons", nargs="+", help="V2 归一化 JSON 文件或通配符")
     c.add_argument("-o", "--output", default="")
     c.set_defaults(func=cmd_compare)
+
+    l = sub.add_parser("lint-ontology", help="词典健康检查：重别名/key 命名/空 aliases/品类标签（改词典前先跑）")
+    l.set_defaults(func=cmd_lint_ontology)
+
+    p = sub.add_parser("promote", help="建议队列 → params.yaml 一键入典（审核通过后；缺省 = 全部）")
+    p.add_argument("keys", nargs="*", help="要入典的 key（缺省 = 建议队列全部）")
+    p.set_defaults(func=cmd_promote)
 
     args = ap.parse_args()
     try:

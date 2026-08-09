@@ -54,6 +54,11 @@ dimension:
   unit_hint: mm
   aliases: [外形尺寸, 尺寸, 尺寸规格, 结构尺寸, Dimensions, Dimension, Body Size, D H, Outline Dimension]
 
+spq:
+  zh: 标准包装数量
+  category: [mov, ntc, x2, cmc, cbb, diode, tvs]
+  aliases: [标准包装数量, 包装数量, SPQ, Standard Packing Quantity, Standard Package Quantity, Standard Pack Quantity]
+
 # ============ NTC 热敏电阻 ============
 r25:
   zh: 零功率电阻值(25℃)
@@ -228,6 +233,60 @@ dv_dt:
   category: [cbb]
   unit_hint: V/μs
   aliases: [dv/dt, dv dt, 电压变化率, 承受电压变化率, 耐dv/dt, dv/dt Rating, Rate of Voltage Rise]
+
+rms_current:
+  zh: 均方根电流
+  category: [cbb, x2]
+  unit_hint: A
+  aliases: [均方根电流, 有效电流, RMS电流, I RMS, IRMS, RMS Current, I(rms), Root Mean Square Current]
+
+withstanding_dc_voltage:
+  zh: 端子间耐直流电压
+  category: [cbb, x2]
+  unit_hint: VDC
+  aliases: [端子间耐直流电压, 直流耐压, DC耐压, Withstanding DC Voltage, Withstanding DC Voltage between Terminals, DC Voltage Proof]
+
+damp_heat_conditions:
+  zh: 稳态湿热测试条件
+  category: [cbb, x2]
+  aliases: [稳态湿热测试条件, 稳态湿热试验条件, 稳态湿热, 湿热测试条件, Damp Heat Test, Damp-heat Test, Steady-state Damp-heat, Damp Heat Test Conditions]
+
+damp_heat_ir_ratio:
+  zh: 稳态湿热后绝缘电阻要求
+  category: [cbb, x2]
+  aliases: [稳态湿热后绝缘电阻要求, 湿热后绝缘电阻, 湿热试验后绝缘电阻, Insulation Resistance after Damp Heat, IR after Damp Heat]
+
+damp_heat_capacitance_change:
+  zh: 稳态湿热后容量变化
+  category: [cbb, x2]
+  unit_hint: "%"
+  aliases: [稳态湿热后容量变化, 湿热后容量变化, 湿热试验后容量变化, Capacitance Change after Damp Heat]
+
+damp_heat_dissipation_factor_increase:
+  zh: 稳态湿热后散逸因数增加
+  category: [cbb, x2]
+  aliases: [稳态湿热后散逸因数增加, 湿热后散逸因数增加, 湿热后损耗角增加, Dissipation Factor Rise after Damp Heat, DF Increase after Damp Heat]
+
+endurance_conditions:
+  zh: 耐久性试验条件
+  category: [cbb, x2]
+  aliases: [耐久性试验条件, 耐久性试验, 寿命试验条件, Endurance Test, Endurance Test Conditions, Load Life Test]
+
+endurance_ir_ratio:
+  zh: 耐久性试验后绝缘电阻要求
+  category: [cbb, x2]
+  aliases: [耐久性试验后绝缘电阻要求, 寿命试验后绝缘电阻, Insulation Resistance after Endurance, IR after Endurance Test]
+
+endurance_capacitance_change:
+  zh: 耐久性试验后容量变化
+  category: [cbb, x2]
+  unit_hint: "%"
+  aliases: [耐久性试验后容量变化, 寿命试验后容量变化, 耐久后容量变化, Capacitance Change after Endurance]
+
+endurance_dissipation_factor_increase:
+  zh: 耐久性试验后散逸因数增加
+  category: [cbb, x2]
+  aliases: [耐久性试验后散逸因数增加, 寿命试验后散逸因数增加, 耐久后损耗角增加, Dissipation Factor Rise after Endurance, DF Increase after Endurance]
 
 # ============ 二极管（2026-08-06 Diotec 1N4007 实测入典，新品类种子） ============
 forward_voltage:
@@ -473,7 +532,7 @@ reflow_time:
   zh: 回流时间
   category: [diode, tvs, x2, cmc]
   unit_hint: sec
-  aliases: [回流时间, 液相线以上时间, Reflow Time, Time Above Liquidus, t(L), TL Time]
+  aliases: [回流时间, 液相线以上时间, Reflow Time, Time Above Liquidus, Reflow Time (t_L), TL Time]
 
 time_25c_to_peak:
   zh: 25℃至峰值时间
@@ -496,3 +555,49 @@ temp_cycling_condition:
   zh: 温度循环试验条件
   category: [diode, tvs, mov, x2]
   aliases: [温度循环试验, 温度循环, 温度冲击试验, Temp Cycling, Temperature Cycling, TC, Temp Cycling Condition]
+
+reference_standards:
+  zh: 参考标准
+  aliases: [Reference standards]
+esr:
+  zh: 等效串联电阻
+  aliases: [ESR]
+life_time:
+  zh: 预期使用寿命
+  aliases: [Useful life time]
+fit:
+  zh: 失效率
+  aliases: [FIT]
+max_ripple_voltage:
+  zh: 最大峰峰值纹波电压
+  aliases: [Maximum applicable peak to peak ripple voltage]
+rated_temperature:
+  zh: 额定温度
+  aliases: [Rated temperature]
+max_case_temperature:
+  zh: 最大允许外壳温度
+  aliases: [Maximum permissible case temperature]
+mounting:
+  zh: 安装方式
+  aliases: [Mounting]
+dielectric:
+  zh: 介质
+  aliases: [Dielectric]
+electrodes:
+  zh: 电极
+  aliases: [Electrodes]
+construction:
+  zh: 结构
+  aliases: [Construction]
+lead_spacing:
+  zh: 引脚间距
+  aliases: [Lead spacing, P1, P2]
+pin_configuration:
+  zh: 引脚数量
+  aliases: [Pin configuration, 2 PINS, 4 PINS, 6 PINS, 12 PINS]
+surge_voltage:
+  zh: 重复浪涌电压
+  aliases: [Repetitive surge voltage, REPETITIVE SURGE VOLTAGE]
+reference_conditions:
+  zh: 参考条件
+  aliases: [Reference conditions, Ratings and Characteristics Reference Conditions]
