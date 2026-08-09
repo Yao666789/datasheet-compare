@@ -18,9 +18,13 @@ python scripts/datasheet_v2.py normalize result.json [-o result.norm.json] [--ll
 
 # 3. 对比：多家 → 一份 Excel（差异标黄 + 页码）
 python scripts/datasheet_v2.py compare a.norm.json b.norm.json -o compare.xlsx
+
+# 4. 本体工具链：词典健康检查 / 建议一键入典 / LLM 调用计数（每次 extract/normalize 自动打印）
+python scripts/datasheet_v2.py lint-ontology   # 重别名/key 命名/空别名/品类标签校验
+python scripts/datasheet_v2.py promote         # suggestions.yaml 审核通过 → 入典 params.yaml
 ```
 
-参数本体 `ontology/params.yaml`（60+ 参数，中英别名）：提取出的新参数自动生成入典建议（`ontology/suggestions.yaml`），审核后入典，词典越跑越准。
+参数本体 `ontology/params.yaml`（109 参数，中英别名）：提取出的新参数自动生成入典建议（`ontology/suggestions.yaml`），审核后 `promote` 一键入典，词典越跑越准。
 
 ### 能力边界（实测声明）
 
@@ -74,7 +78,9 @@ python scripts/datasheet_tool.py compare bourns.json junyao.json --category mov 
 | NTC 热敏电阻 | R25/稳态电流/B值/热时间常数 | ✅ 已验证 ×2 |
 | X2 安规电容 | 安规等级/气候类别/湿热等级 | ✅ 已验证 ×2 |
 | 共模电感 | 电感量/额定电流/DCR/耐压 | ✅ 已验证 |
-| CBB 电容 | dv/dt/耐压余量 | 📋 计划中 |
+| 二极管 | VF/trr/IFSM/反向耐压 | ✅ 已验证 |
+| TVS 瞬态抑制 | V_BR/钳位电压/峰值脉冲功率/回流焊曲线 | ✅ 已验证 ×2 |
+| CBB 薄膜电容 | dv/dt/ESR/寿命/稳态湿热/耐久性判据 | ✅ 已验证 ×2 |
 
 ## V2 实测成绩单（2026-08-06，双指标）
 
@@ -94,6 +100,18 @@ python scripts/datasheet_tool.py compare bourns.json junyao.json --category mov 
 - **8 份实测，正式 7 份全部 ≥90.9%**，页码溯源率 198/198 = **100%**
 - **零幻觉抽查**：核心参数逐条回原文核对一致（时恒 R25=10Ω±20%、B 值 2800K；1N4007 VF<1.1V、trr=1500ns、IFSM=30A）；唯一发现 CMC 电感字段错位（unit 校验器自动标 ⚠ 拦截，未静默通过）
 - 新品类实测（二极管）证明零 ontology 基础可用，12 个二极管参数已反哺入典
+
+### V2 品类毕业补测（2026-08-09，二轮评审后）
+
+| Datasheet | 品类 | 对齐 | 备注 |
+|---|---|---|---|
+| **SMBJ 系列（Vishay）** | **TVS** | **30/30** | 全词典命中，P0-2 归一化警告消失 |
+| **SMBJ 系列（Littelfuse）** | **TVS** | **44/44** | 含全套回流焊曲线参数，V_BR 温度系数归位 |
+| **MKP1848（Vishay）** | **CBB** | **40/40** | DC-Link 大功率，暴露 15 条 CBB 专属参数反哺入典 |
+| **CBB21B（SRD 国产）** | **CBB** | **29/29** | 暴露 8 条 GB 稳态湿热/耐久性试验判据反哺入典 |
+
+- TVS 双厂商对比表 2×44 项、CBB 双厂商对比表 2×49 项，**零未归一化 ⚠，页码溯源 100%**
+- 词典本轮 86 → 109 参数；verify_fixes 回归 **19/19 零回归**，8 份老数据 223/223 不受影响
 
 ## 实测成绩单（2026-08-02）
 
@@ -136,13 +154,13 @@ python scripts/datasheet_v2.py compare a.norm.json b.norm.json -o compare.xlsx
 
 ```
 datasheet-compare/
-├── SKILL.md              # skill 入口（Hermes/Claude 等 AI 平台直接挂载）
-├── ontology/params.yaml  # 参数本体：36+ 参数中英别名词典（归一化核心）
-├── ontology/suggestions.md  # 新参数入典建议（审核后移入 params.yaml）
+├── SKILL.md                 # skill 入口（Hermes/Claude 等 AI 平台直接挂载）
+├── ontology/params.yaml     # 参数本体：109 参数中英别名词典（归一化核心）
+├── ontology/suggestions.yaml  # 新参数入典建议（promote 审核后移入 params.yaml）
 ├── scripts/
-│   ├── datasheet_v2.py      # V2：通用提取 + 归一化 + 对比（推荐）
+│   ├── datasheet_v2.py      # V2：通用提取 + 归一化 + 对比 + lint/promote（推荐）
 │   └── datasheet_tool.py    # v1：品类 schema 严格提取（兼容保留）
-├── schemas/              # 品类参数模板（v1 用，V2 作提示参考）
+├── schemas/                 # 品类参数模板（v1 用，V2 作提示参考）
 ├── requirements.txt
 └── README.md
 ```
@@ -151,7 +169,7 @@ datasheet-compare/
 
 我在制造业产线上做工艺工程师。每天看 datasheet、选元器件、手抄参数做对比表。这个工具解决的就是我自己的痛点。非科班出身，但我造的东西是跑在真实工厂里用的。
 
-项目计划开源至 GitHub，正在扩展至五品类。欢迎提 issue、补 schema、一起做。
+项目已开源至 GitHub，已覆盖七个品类（MOV/NTC/X2/CMC/二极管/TVS/CBB），正在向更多品类扩展。欢迎提 issue、补 schema、一起做。
 
 ## License
 
