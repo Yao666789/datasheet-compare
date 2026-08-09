@@ -385,7 +385,7 @@ def cmd_normalize(args):
         data = json.load(f)
     params = data.get("parameters")
     if not isinstance(params, list):
-        raise RuntimeError(f"错误：{args.json} 不是 V2 格式（缺少 parameters 数组）")
+        sys.exit(f"错误：{args.json} 不是 V2 格式（缺少 parameters 数组）")
 
     # 清洗历史 extract 产物：LLM 偶发把 null 写成 "None" 字符串 → 置空（防对比表 "None xxx None" 拼接）
     for p in params:
@@ -407,8 +407,8 @@ def cmd_normalize(args):
                 partial = llm_fallback(batch, ont)
                 for k in ("mapped", "new_params"):
                     res.setdefault(k, []).extend(partial.get(k, []) or [])
-            except (RuntimeError, SystemExit):
-                # 兜底失败降级：本次未命中参数保持原样，不阻塞（call_llm 二轮评审 #1 起抛 RuntimeError）
+            except SystemExit:
+                # 兜底失败降级：本次未命中参数保持原样，不阻塞
                 print("⚠️ LLM 兜底调用失败，降级为纯词典结果（未命中参数保持原样，可在对比表中看到 ⚠ 标注）", file=sys.stderr)
                 break
         mapped = res.get("mapped", []) or []
@@ -477,7 +477,7 @@ def cmd_compare(args):
 
     files = sorted(set(p for pat in args.jsons for p in _glob.glob(pat)))
     if len(files) < 2:
-        raise RuntimeError("至少需要 2 个 JSON 才能对比")
+        sys.exit("至少需要 2 个 JSON 才能对比")
     items = []  # (列名, {key: 参数})
     versions = {}  # 文件 → ontology_version（P2-7 版本一致性检查）
     for p in files:
@@ -500,7 +500,7 @@ def cmd_compare(args):
         items.append((col, pmap))
 
     if len(items) < 2:
-        raise RuntimeError(f"至少需要 2 个有效 JSON 才能对比（当前 {len(items)} 个）")
+        sys.exit(f"至少需要 2 个有效 JSON 才能对比（当前 {len(items)} 个）")
 
     # key 排序：本体顺序优先，其余按字母
     ont_order = {k: i for i, k in enumerate(ont)}
@@ -640,7 +640,7 @@ def cmd_extract(args):
 
     # P0 守卫：无文本层扫描件（复用 v1 守卫）
     if len(raw.strip()) < MIN_TEXT_CHARS:
-        raise RuntimeError(
+        sys.exit(
             f"错误：从 PDF 只提取到 {len(raw.strip())} 字符（共 {total_pages} 页），疑似扫描件/图片型 PDF，无文本层。\n"
             "请先用 OCR 工具（如 WPS、Adobe、PaddleOCR）转成文字层 PDF 再试。"
         )
@@ -649,13 +649,6 @@ def cmd_extract(args):
               "系列料表可能只覆盖了部分型号，请核对提取结果是否完整！", file=sys.stderr)
 
     prompt = build_prompt_v2(raw, args.category or "", args.part or "", ont)
-
-    # 二轮圆桌 #4：token 预估——大 PDF 全量进 prompt 前先看到量级，防 API 400/费用暴涨
-    n_chars = len(prompt)
-    n_tokens = n_chars // 3  # 中英混排保守折算（中文 ~1.5-2 字/token，英文 ~4 字/token）
-    print(f"prompt 长度 {n_chars:,} 字符 ≈ 预估 {n_tokens:,} tokens（PDF 文本 {len(raw):,} 字符）")
-    if n_chars > 50000:
-        print(f"⚠️ prompt 超过 5 万字符，模型 400/计费风险高——建议拆分 PDF 或先只提取关键页", file=sys.stderr)
 
     if args.dry_run:
         print(f"--- PDF 解析得到 {len(raw)} 字符，prompt 如下（未调 API）---\n")
@@ -719,12 +712,7 @@ def main():
     c.set_defaults(func=cmd_compare)
 
     args = ap.parse_args()
-    try:
-        args.func(args)
-    except RuntimeError as e:
-        # 二轮圆桌 #1：错误一律结构化输出（Hermes 进程收到 JSON 错误，而非无输出退出）
-        print(json.dumps({"ok": False, "error": str(e)}, ensure_ascii=False), file=sys.stderr)
-        sys.exit(1)
+    args.func(args)
 
 
 if __name__ == "__main__":

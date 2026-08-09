@@ -147,7 +147,7 @@ datasheet 全文如下：
 def call_llm(prompt: str) -> dict:
     api_key = os.environ.get("DEEPSEEK_API_KEY") or os.environ.get("LLM_API_KEY")
     if not api_key:
-        sys.exit("错误：未设置 DEEPSEEK_API_KEY 环境变量（也可用 LLM_API_KEY）")
+        raise RuntimeError("错误：未设置 DEEPSEEK_API_KEY 环境变量（也可用 LLM_API_KEY）")
     # 清除残留代理——公司网络走 Clash 7897，但 Clash 经常不在线，直连 deepseek 即可
     for k in ("HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy", "ALL_PROXY"):
         os.environ.pop(k, None)
@@ -174,7 +174,7 @@ def call_llm(prompt: str) -> dict:
             print(f"API 调用失败（第 {attempt + 1} 次）：{e}；{wait}s 后重试", file=sys.stderr)
             if attempt < 3:
                 time.sleep(wait)
-    sys.exit(f"API 连续 4 次调用失败：{last_err}")
+    raise RuntimeError(f"API 连续 4 次调用失败：{last_err}")
 
 
 def _wrap_value(value: str, unit: str, tolerance: str = None, qualifier: str = None, page: str = None) -> dict:
@@ -219,7 +219,7 @@ def cmd_extract(args):
 
     # P0 守卫：无文本层的扫描件会静默产出全空 JSON，必须先拦住
     if len(raw.strip()) < MIN_TEXT_CHARS:
-        sys.exit(
+        raise RuntimeError(
             f"错误：从 PDF 只提取到 {len(raw.strip())} 字符（共 {total_pages} 页），疑似扫描件/图片型 PDF，无文本层。\n"
             "请先用 OCR 工具（如 WPS、Adobe、PaddleOCR）转成文字层 PDF 再试。"
         )
@@ -228,6 +228,12 @@ def cmd_extract(args):
               "系列料表可能只覆盖了部分型号，请核对提取结果是否完整！", file=sys.stderr)
 
     prompt = build_prompt(schema, raw, args.part or "")
+
+    # 二轮圆桌 #4：token 预估（v1 同款）
+    n_chars = len(prompt)
+    print(f"prompt 长度 {n_chars:,} 字符 ≈ 预估 {n_chars // 3:,} tokens（PDF 文本 {len(raw):,} 字符）")
+    if n_chars > 50000:
+        print(f"⚠️ prompt 超过 5 万字符，模型 400/计费风险高——建议拆分 PDF 或先只提取关键页", file=sys.stderr)
 
     if args.dry_run:
         print(f"--- PDF 解析得到 {len(raw)} 字符，prompt 如下（未调 API）---\n")
@@ -325,7 +331,7 @@ def cmd_compare(args):
 
     files = sorted(set(p for pat in args.jsons for p in glob.glob(pat)))
     if len(files) < 2:
-        sys.exit("至少需要 2 个 JSON 才能对比")
+        raise RuntimeError("至少需要 2 个 JSON 才能对比")
     items = []
     for p in files:
         with open(p, encoding="utf-8-sig") as fp:
@@ -456,7 +462,12 @@ def main():
     c.set_defaults(func=cmd_compare)
 
     args = ap.parse_args()
-    args.func(args)
+    try:
+        args.func(args)
+    except RuntimeError as e:
+        # 二轮圆桌 #1：错误一律结构化输出（Hermes 进程收到 JSON 错误，而非无输出退出）
+        print(json.dumps({"ok": False, "error": str(e)}, ensure_ascii=False), file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
