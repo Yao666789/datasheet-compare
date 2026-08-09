@@ -36,43 +36,11 @@ ONTOLOGY_FILE = ONTOLOGY_DIR / "params.yaml"
 LLM_FALLBACK_BATCH = 40  # LLM 兜底分批上限（一次最多问 40 个参数，超了拆批，控成本控时长）
 
 # 单位量级族（用于抓"抓错列/抄错单位"类幻觉：hint 是 mH 却提取 nH → 量级冲突）
-# 跨族不判（避免 V/sec/℃ 变体误报）；温度（°C/K）是仿射关系非倍数，不加入
 UNIT_FAMILIES = [
     ["nh", "uh", "µh", "mh", "h", "kh"],
     ["pf", "nf", "uf", "µf", "mf", "f"],
-    ["mohm", "mω", "ohm", "ω", "kohm", "kω"],  # 注：norm_unit 后 mΩ/MΩ 均归 "mω"，天然同族
-    ["mv", "v", "kv"],
-    ["ua", "µa", "ma", "a", "ka"],
-    ["hz", "khz", "mhz", "ghz"],
-    ["ms", "us", "µs", "ns", "s"],
-    ["mw", "w", "kw"],
+    ["mohm", "mω", "ohm", "ω", "kohm", "kω"],
 ]
-
-# 单位量级归一表（仅用于"是否相等"判定，不改原文值）：基准 µH/µF/Ω/V/A/Hz/s/W
-UNIT_SCALE = {
-    "nh": 1e-3, "uh": 1, "µh": 1, "μh": 1, "mh": 1e3, "h": 1e6, "kh": 1e9,
-    "pf": 1e-6, "nf": 1e-3, "uf": 1, "µf": 1, "μf": 1, "mf": 1e3, "f": 1e6,
-    "mohm": 1e-3, "mω": 1e-3, "ohm": 1, "ω": 1, "kohm": 1e3, "kω": 1e3,
-    "mv": 1e-3, "v": 1, "kv": 1e3,
-    "ma": 1e-3, "a": 1, "ka": 1e3,
-    "hz": 1, "khz": 1e3, "mhz": 1e6, "ghz": 1e9,
-    "ms": 1e-3, "s": 1, "us": 1e-6, "µs": 1e-6, "ns": 1e-9,
-    "mw": 1e-3, "w": 1, "kw": 1e3,
-}
-
-
-def norm_with_unit(s: str) -> str:
-    """比较用的单位归一版 norm()：把 "100 nF" / "0.1 µF" 归一成基准单位数值（→"100"）后再比；
-    解析不了（带限定词/范围等）就回退原 norm()。只影响差异判定，不改变输出值。"""
-    m = re.match(r"^\s*([-+]?\d+(?:\.\d+)?)\s*([a-zµμ°ωΩ]+)\s*$", s, re.I)
-    if m:
-        val, unit = m.group(1), norm_unit(m.group(2))
-        if unit in UNIT_SCALE:
-            try:
-                return f"{float(val) * UNIT_SCALE[unit]:.6g}"
-            except ValueError:
-                pass
-    return norm(s)
 
 
 def norm_unit(s: str) -> str:
@@ -183,15 +151,10 @@ def _clean_param(p: dict) -> dict:
     if isinstance(out["value"], (dict, list)):
         out["value"] = json.dumps(out["value"], ensure_ascii=False)
     elif out["value"] is not None:
-        sv = str(out["value"]).strip()
-        # LLM 偶发返回 JSON null/字符串 "None" → 置空，防对比表拼出 "None xxx None"
-        out["value"] = None if sv.lower() == "none" else sv
+        out["value"] = str(out["value"]).strip()
     for k in ("unit", "tolerance", "qualifier"):
-        v = p.get(k)
-        if v is None:
-            continue
-        v = str(v).strip()
-        if v and v.lower() != "none":
+        v = str(p.get(k, "")).strip()
+        if v:
             out[k] = v
     v_page = str(p.get("page", "")).strip()
     if v_page:
@@ -264,23 +227,14 @@ def match_ontology(params: list, ont: dict) -> tuple:
             if c in lookup:  # 完全匹配
                 hit = lookup[c]
                 break
-        flagged = False
         if hit is None:
-            low_conf = None  # (na, k) 短别名吞长参数的候选（如 "resistance" 吞 "thermal_resistance"）
             for c in cand_norms:
                 for na, k in substr_cands:
                     if na in c:
-                        if len(na) >= len(c) * 0.6:
-                            hit = k
-                        elif low_conf is None:
-                            low_conf = (na, k)
+                        hit = k
                         break
                 if hit:
                     break
-            if low_conf is not None:
-                na, k = low_conf
-                flagged = True
-                unknown.append({**p, "match_warning": f"疑似被短别名「{na}」误匹配到 {k}，请人工确认"})
         if hit:
             m = ont[hit]
             item = {
@@ -294,7 +248,7 @@ def match_ontology(params: list, ont: dict) -> tuple:
                 item["unit_warning"] = warn
                 print(f"  {warn}（{hit}：{p.get('value')} {p.get('unit')}）", file=sys.stderr)
             aligned.append(item)
-        elif not flagged:  # 低置信度已记入 unknown（带 match_warning），避免重复
+        else:
             unknown.append(p)
     return aligned, unknown
 
@@ -315,8 +269,7 @@ def key_similarity(k1: str, k2: str) -> float:
 
 
 def llm_fallback(unknown: list, ont: dict) -> dict:
-    """LLM 兜底：未命中参数批量归类 → {"mapped": [{index, original, key, confidence}], "new_params": [...]}
-    序号匹配为主（LLM 复述 original 容易差空格/大小写），original 字段仅作人工核对。"""
+    """LLM 兜底：未命中参数批量归类 → {"mapped": [{original, key, confidence}], "new_params": [...]}"""
     known_lines = [f"- {k}：{m['zh']}" for k, m in sorted(ont.items())]
     unknown_lines = [
         f"- {i}. key={p.get('key')} zh={p.get('zh')} original={p.get('original')} value={p.get('value')}"
@@ -327,16 +280,15 @@ def llm_fallback(unknown: list, ont: dict) -> dict:
 规范参数清单（key：中文名）：
 {chr(10).join(known_lines)}
 
-待归类参数（行首数字是该参数的 index）：
+待归类参数：
 {chr(10).join(unknown_lines)}
 
 规则：
 - 语义相同/近义 → 映射到规范 key（confidence: high）；仅部分相关 → low
 - 确为清单没有的新参数 → 放 new_params，key 用简洁英文 snake_case，zh 给中文名，aliases 给中英别名（含原文名）
 - 拿不准的 → 放 mapped 且 confidence: low
-- mapped 里必须带待归类参数行首的 index（数字），禁止自行改写 original
 
-严格输出 JSON：{{"mapped": [{{"index": 0, "original": "...", "key": "...", "confidence": "high|low"}}], "new_params": [{{"key": "...", "zh": "...", "aliases": ["..."]}}]}}，不要其他文字。"""
+严格输出 JSON：{{"mapped": [{{"original": "...", "key": "...", "confidence": "high|low"}}], "new_params": [{{"key": "...", "zh": "...", "aliases": ["..."]}}]}}，不要其他文字。"""
     data = call_llm(prompt)
     return data if isinstance(data, dict) else {"mapped": [], "new_params": []}
 
@@ -387,16 +339,8 @@ def cmd_normalize(args):
     if not isinstance(params, list):
         sys.exit(f"错误：{args.json} 不是 V2 格式（缺少 parameters 数组）")
 
-    # 清洗历史 extract 产物：LLM 偶发把 null 写成 "None" 字符串 → 置空（防对比表 "None xxx None" 拼接）
-    for p in params:
-        if not isinstance(p, dict):
-            continue
-        for k in ("value", "unit", "tolerance", "qualifier"):
-            v = p.get(k)
-            if v is None or (isinstance(v, str) and v.strip().lower() == "none"):
-                p.pop(k, None)
-
     aligned, unknown = match_ontology(params, ont)
+    mapped_meta = {}
 
     if unknown and args.llm_fallback:
         print(f"LLM 兜底归类 {len(unknown)} 个未命中参数（分批 ≤ {LLM_FALLBACK_BATCH}/次）…", file=sys.stderr)
@@ -413,33 +357,26 @@ def cmd_normalize(args):
                 break
         mapped = res.get("mapped", []) or []
         new_params = res.get("new_params", []) or []
-        # 映射解析：index 定位为主（LLM 复述 original 易失配），original 字符串兜底（防 LLM 不听话）
-        idx_map, orig_map = {}, {}
         for m in mapped:
-            if m.get("key") not in ont:
-                continue
-            idx = m.get("index")
-            if isinstance(idx, int) and 0 <= idx < len(unknown):
-                idx_map[idx] = m["key"]
-            if m.get("original"):
-                orig_map[norm_key(m["original"])] = m["key"]
-        # 应用映射（unknown 映射成功 → 并入 aligned；失败 → 保持 unknown 待人工）
-        aligned2, still_unknown = list(aligned), []
-        for i, p in enumerate(unknown):
-            k = idx_map.get(i) or orig_map.get(norm_key(p.get("original", "")))
-            if k and k in ont:
+            if m.get("key") in ont:
+                mapped_meta[m.get("original", "")] = m["key"]
+        # 应用映射
+        aligned2 = []
+        for p in aligned:
+            if p.get("original") in mapped_meta:
+                k = mapped_meta[p["original"]]
                 aligned2.append({**p, "key": k, "zh": ont[k]["zh"], "unit_hint": ont[k].get("unit_hint", "")})
             else:
-                still_unknown.append(p)
+                aligned2.append(p)
         aligned = aligned2
-        unknown = still_unknown
+        still_unknown = [p for p in unknown if p.get("original") not in mapped_meta and p.get("key") not in ont]
         if new_params:
             # 相似度检测：新 key 与已有 key 高相似 → merge_hint 提示人工确认（防 ontology 碎片化）
             ont_keys = list(ont)
             for np_ in new_params:
-                np_raw = np_.get("key", "")  # 原始 key（不过 norm_key：分隔符被删后无法切词，相似度恒 0）
+                np_key = norm_key(np_.get("key", ""))
                 sims = sorted(
-                    ((k, key_similarity(np_raw, k)) for k in ont_keys if key_similarity(np_raw, k) >= 0.5),
+                    ((k, key_similarity(np_key, norm_key(k))) for k in ont_keys if key_similarity(np_key, norm_key(k)) >= 0.5),
                     key=lambda x: -x[1],
                 )
                 if sims:
@@ -447,13 +384,9 @@ def cmd_normalize(args):
             write_suggestions(new_params, ONTOLOGY_DIR / "suggestions.yaml", data.get("source_file", ""))
         unknown = still_unknown
 
-    # P2-7：ontology 版本戳（ontology 变更 → hash 变 → compare 可检测跨版本错位）
-    import hashlib
-    ont_hash = hashlib.md5(json.dumps(ont, sort_keys=True).encode()).hexdigest()[:8]
     result = {
         "category": data.get("category", ""),
         "source_file": data.get("source_file", ""),
-        "ontology_version": ont_hash,
         "parameters": aligned + [p for p in unknown],
     }
     out = args.output or Path(args.json).with_suffix(".norm.json").name
@@ -479,16 +412,12 @@ def cmd_compare(args):
     if len(files) < 2:
         sys.exit("至少需要 2 个 JSON 才能对比")
     items = []  # (列名, {key: 参数})
-    versions = {}  # 文件 → ontology_version（P2-7 版本一致性检查）
     for p in files:
         with open(p, encoding="utf-8-sig") as f:
             d = json.load(f)
         params = d.get("parameters")
         if not isinstance(params, list):
-            print(f"⚠️ 跳过 {p}：不是 V2 格式（缺少 parameters 数组），请先 extract + normalize", file=sys.stderr)
-            continue
-        if d.get("ontology_version"):
-            versions.setdefault(d["ontology_version"], []).append(p)
+            sys.exit(f"错误：{p} 不是 V2 格式（缺少 parameters 数组），请先 extract + normalize")
         pmap = {}
         for q in params:
             k = q.get("key")
@@ -499,44 +428,21 @@ def cmd_compare(args):
         col = f"{sup} {pn}".strip() or Path(p).stem
         items.append((col, pmap))
 
-    if len(items) < 2:
-        sys.exit(f"至少需要 2 个有效 JSON 才能对比（当前 {len(items)} 个）")
-
     # key 排序：本体顺序优先，其余按字母
     ont_order = {k: i for i, k in enumerate(ont)}
     all_keys = sorted({k for _, pm in items for k in pm}, key=lambda k: (ont_order.get(k, 10**9), k))
-
-    # P0-2 守卫：未归一化比例过高 → 强警告（防"假对比表"：同一参数 key 不同被拆行、真差异被吞）
-    unmatched = [k for k in all_keys if k not in ont]
-    ratio = len(unmatched) / len(all_keys) if all_keys else 0
-    if ratio > 0.3:
-        print(
-            f"⚠️⚠️ {len(unmatched)}/{len(all_keys)} 个参数未归一化（{ratio:.0%}），"
-            f"同一参数在不同文件可能 key 不同被拆成多行、真差异被吞——建议先对每份 JSON 执行 normalize 再对比！",
-            file=sys.stderr,
-        )
-
-    # P2-7 检查：各文件 ontology 版本不一致 → 提示
-    if len(versions) > 1:
-        detail = "；".join(f"{k}（{len(v)} 份）" for k, v in versions.items())
-        print(f"⚠️ 检测到 {len(versions)} 个 ontology 版本（{detail}），对比结果可能不完整——建议统一重新 normalize", file=sys.stderr)
-
-    def _disp_ok(v) -> str:
-        """字段可显示判断：None / "None" 字符串都当空（LLM 偶发返回）"""
-        s = str(v).strip() if v is not None else ""
-        return s if s.lower() != "none" else ""
 
     def disp(p: dict, show_page: bool = False) -> str:
         if not p or not _has_value(p):
             return ""
         parts = []
-        if _disp_ok(p.get("qualifier")):
-            parts.append(_disp_ok(p["qualifier"]))
+        if p.get("qualifier"):
+            parts.append(str(p["qualifier"]))
         parts.append(str(p["value"]))
-        if _disp_ok(p.get("unit")):
-            parts.append(_disp_ok(p["unit"]))
-        if _disp_ok(p.get("tolerance")):
-            parts.append(_disp_ok(p["tolerance"]))
+        if p.get("unit"):
+            parts.append(str(p["unit"]))
+        if p.get("tolerance"):
+            parts.append(str(p["tolerance"]))
         if show_page and p.get("page"):
             parts.append(f"({p['page']})")
         return " ".join(parts)
@@ -552,7 +458,7 @@ def cmd_compare(args):
         row = [f"{zh} ({key})" + ("" if in_ont else " ⚠未归一化")]
         vals = [pm.get(key) for _, pm in items]
         shown = [disp(v) for v in vals]
-        has_diff = len({norm_with_unit(s) for s in shown if s}) > 1
+        has_diff = len({norm(s) for s in shown if s}) > 1
         row += [disp(v, show_page=has_diff) or "—" for v in vals]
         print("| " + " | ".join(row) + " |")
 
@@ -584,7 +490,7 @@ def cmd_compare(args):
         ws.write(r, 0, label, f_name)
         vals = [pm.get(key) for _, pm in items]
         shown = [disp(v) for v in vals]
-        has_diff = len({norm_with_unit(s) for s in shown if s}) > 1
+        has_diff = len({norm(s) for s in shown if s}) > 1
         for c, v in enumerate(vals, 1):
             dv = disp(v, show_page=has_diff)
             if not dv:

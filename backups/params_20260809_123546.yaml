@@ -13,44 +13,44 @@
 # ============ 通用 ============
 supplier:
   zh: 厂商
-  category: [mov, ntc, x2, cmc, cbb, diode, tvs]
+  category: [mov, ntc, x2, cmc, cbb]
   aliases: [厂商, 供应商, 生产厂家, 制造商, 厂名, Manufacturer, Supplier, Brand, Maker]
 
 part_number:
   zh: 料号
-  category: [mov, ntc, x2, cmc, cbb, diode, tvs]
+  category: [mov, ntc, x2, cmc, cbb]
   aliases: [料号, 型号, 产品型号, 品名, 订购型号, Part Number, Part No, P/N, PN, Model, Model No, Ordering Code, Order Code]
 
 series:
   zh: 系列
-  category: [mov, ntc, x2, cmc, cbb, diode, tvs]
+  category: [mov, ntc, x2, cmc, cbb]
   aliases: [系列, 产品系列, Series, Series Name, Type Series]
 
 operating_temp:
   zh: 工作温度
-  category: [mov, ntc, x2, cmc, cbb, diode, tvs]
+  category: [mov, ntc, x2, cmc, cbb]
   unit_hint: °C
   aliases: [工作温度, 工作温度范围, 使用温度范围, 操作温度, Operating Temperature, Operating Temp, Operating Temp Range, Working Temperature, Op. Temp]
 
 storage_temp:
   zh: 存贮温度
-  category: [mov, ntc, x2, cmc, cbb, diode, tvs]
+  category: [mov, ntc, x2, cmc, cbb]
   unit_hint: °C
   aliases: [存贮温度, 存储温度, 储存温度, Storage Temperature, Storage Temp]
 
 packaging:
   zh: 包装
-  category: [mov, ntc, x2, cmc, cbb, diode, tvs]
+  category: [mov, ntc, x2, cmc, cbb]
   aliases: [包装, 包装方式, 封装形式, 包装形式, Packaging, Packing, Package, Packing Type, Packing Method]
 
 approvals:
   zh: 认证
-  category: [mov, ntc, x2, cmc, cbb, diode, tvs]
+  category: [mov, ntc, x2, cmc, cbb]
   aliases: [认证, 安规认证, 安全认证, 证书, Approvals, Approval, Safety Approvals, Certifications, Standards Compliance]
 
 dimension:
   zh: 外形尺寸
-  category: [mov, ntc, x2, cmc, cbb, diode, tvs]
+  category: [mov, ntc, x2, cmc, cbb]
   unit_hint: mm
   aliases: [外形尺寸, 尺寸, 尺寸规格, 结构尺寸, Dimensions, Dimension, Body Size, D H, Outline Dimension]
 
@@ -59,7 +59,7 @@ r25:
   zh: 零功率电阻值(25℃)
   category: [ntc]
   unit_hint: Ω
-  aliases: [R25, R 25, 零功率电阻值, 零功率电阻, 标称电阻, 25℃电阻, 25度电阻, 常温电阻, Resistance at 25℃, Resistance at 25°C, Zero Power Resistance, R at 25°C]
+  aliases: [R25, R 25, 零功率电阻值, 零功率电阻, 标称电阻, 25℃电阻, 25度电阻, 常温电阻, Resistance at 25℃, Resistance at 25°C, Zero Power Resistance, Resistance, R at 25°C]
 
 max_steady_current:
   zh: 最大稳态电流
@@ -87,7 +87,7 @@ thermal_time_constant:
 
 power_rating:
   zh: 额定功率
-  category: [ntc, mov, tvs]
+  category: [ntc, mov]
   unit_hint: W
   aliases: [额定功率, 最大功率, 功率, 功率耗散, 耗散功率, Rated Power, Power Rating, Maximum Power, Max Power, Power Dissipation, Rated Power Dissipation]
 
@@ -96,17 +96,17 @@ varistor_voltage:
   zh: 压敏电压
   category: [mov]
   unit_hint: V
-  aliases: [压敏电压, 压敏电阻电压, 标称压敏电压, 压敏电压UN, Varistor Voltage, Variator Voltage, UN, VN]
+  aliases: [压敏电压, 压敏电阻电压, 标称压敏电压, 压敏电压UN, Varistor Voltage, Variator Voltage, UN, VN, Breakdown Voltage, 击穿电压]
 
 max_continuous_voltage:
   zh: 最大连续工作电压
-  category: [mov, tvs]
+  category: [mov]
   unit_hint: VAC/VDC
   aliases: [最大连续工作电压, 最大连续电压, 连续工作电压, 最大连续交流直流电压, Maximum Continuous Voltage, Max Continuous Voltage, Max AC DC Voltage, Maximum AC DC Voltage, MCOV]
 
 max_peak_current:
   zh: 最大峰值电流(通流量)
-  category: [mov, tvs]
+  category: [mov]
   unit_hint: A
   aliases: [最大峰值电流, 峰值电流, 通流量, 最大通流量, 浪涌电流, 最大冲击电流, 冲击电流, 耐冲击电流, Maximum Peak Current, Max Peak Current, Peak Current, Maximum Surge Current, Max Surge Current, Surge Current, Max Withstanding Surge]
 
@@ -118,13 +118,13 @@ energy_rating:
 
 clamping_voltage:
   zh: 限制电压
-  category: [mov, tvs]
+  category: [mov]
   unit_hint: V
   aliases: [限制电压, 钳位电压, 残压, Clamping Voltage, Clamp Voltage, Maximum Clamping Voltage, Max Clamping Voltage]
 
 leakage_current:
   zh: 漏电流
-  category: [mov, tvs]
+  category: [mov]
   unit_hint: μA
   aliases: [漏电流, 最大漏电流, 直流漏电流, Leakage Current, Leak Current, Maximum Leakage Current, Max Leakage Current]
 
@@ -159,8 +159,8 @@ climatic_category:
 
 thb_rating:
   zh: 湿热等级
-  category: [x2, tvs, diode]
-  aliases: [湿热等级, 湿热试验等级, 偏置温湿度试验, 偏置温湿度, THB, THB Rating, THB Grade, Temperature Humidity Bias, Biased Temp and Humidity, Biased Temp Humidity, THB Condition]
+  category: [x2]
+  aliases: [湿热等级, 湿热试验等级, THB, THB Rating, THB Grade, Temperature Humidity Bias]
 
 dissipation_factor:
   zh: 散逸因数
@@ -232,83 +232,77 @@ dv_dt:
 # ============ 二极管（2026-08-06 Diotec 1N4007 实测入典，新品类种子） ============
 forward_voltage:
   zh: 正向电压
-  category: [diode, tvs]
+  category: [diode]
   unit_hint: V
-  aliases: [正向电压, 正向压降, 导通压降, Forward Voltage, VF, V F, Forward Voltage Drop, Maximum Instantaneous Forward Voltage at 50 A for Unidirectional Only (Stacked Die)]
+  aliases: [正向电压, 正向压降, 导通压降, Forward Voltage, VF, V F, Forward Voltage Drop]
 
 repetitive_peak_reverse_voltage:
   zh: 重复峰值反向电压
-  category: [diode, tvs]
+  category: [diode]
   unit_hint: V
   aliases: [重复峰值反向电压, 反向重复峰值电压, 最高反向工作电压, Repetitive Peak Reverse Voltage, VRRM, VRM, Reverse Voltage, Peak Reverse Voltage, Max Reverse Voltage]
 
 surge_peak_reverse_voltage:
   zh: 浪涌峰值反向电压
-  category: [diode, tvs]
+  category: [diode]
   unit_hint: V
   aliases: [浪涌峰值反向电压, Surge Peak Reverse Voltage, VRSM]
 
 repetitive_peak_forward_current:
   zh: 重复峰值正向电流
-  category: [diode, tvs]
+  category: [diode]
   unit_hint: A
   aliases: [重复峰值正向电流, 峰值正向电流, Repetitive Peak Forward Current, IFRM]
 
-peak_forward_surge_current:
-  zh: 峰值正向浪涌电流
-  category: [diode, tvs]
-  unit_hint: A
-  aliases: [峰值正向浪涌电流, 正向浪涌电流, Peak Forward Surge Current, Forward Surge Current, I_FSM, IFSM]
-
 reverse_recovery_time:
   zh: 反向恢复时间
-  category: [diode, tvs]
+  category: [diode]
   unit_hint: ns
   aliases: [反向恢复时间, 恢复时间, Reverse Recovery Time, trr, T rr, Recovery Time]
 
 junction_capacitance:
   zh: 结电容
-  category: [diode, tvs]
+  category: [diode]
   unit_hint: pF
   aliases: [结电容, Junction Capacitance, CJ, Cj, CJ]
 
 i2t:
   zh: 熔断积分
-  category: [diode, mov, tvs]
+  category: [diode, mov]
   unit_hint: A²s
   aliases: [熔断积分, 电流平方时间积, Rating for Fusing, I2t, I²t, i2t]
 
 thermal_resistance_junction_ambient:
   zh: 热阻（结-环境）
-  category: [diode, tvs]
+  category: [diode]
   unit_hint: K/W
   aliases: [热阻结到环境, 结环境热阻, 热阻结环境, Thermal Resistance Junction to Ambient, RthJA, Rth J A]
 
 thermal_resistance_junction_leads:
   zh: 热阻（结-引脚）
-  category: [diode, tvs]
+  category: [diode]
   unit_hint: K/W
   aliases: [热阻结到引脚, 结引脚热阻, Thermal Resistance Junction to Leads, RthJL, Rth J L]
 
 quality_grade:
   zh: 质量等级
-  category: [diode, tvs]
+  category: [diode]
   aliases: [质量等级, 等级, 品质等级, Quality Grade, Grade, Quality Level]
 
 weight:
   zh: 重量
-  category: [diode, cmc, mov, tvs]
+  category: [diode, cmc, mov]
   unit_hint: g
   aliases: [重量, Weight, Mass]
 
 msl:
   zh: 湿度敏感等级
-  category: [diode, x2, tvs]
+  category: [diode, x2]
   aliases: [湿度敏感等级, 湿敏等级, MSL, Moisture Sensitivity Level]
 
 hs_code:
   zh: 海关编码
-  category: [diode, mov, x2, tvs]
+  category: [diode, mov, x2]
   aliases: [海关编码, 海关HS编码, HS Code, HS 编码, Customs Code]
 
 # ============ NTC 补充（2026-08-05 时恒 MF72 实测入典） ============
@@ -325,17 +319,17 @@ r_t_curve:
 
 voltage_current_curve:
   zh: 伏安曲线
-  category: [ntc, mov, tvs]
+  category: [ntc, mov]
   aliases: [伏安曲线, V-I曲线, curve of voltage and current, V-I Curve]
 
 wire_material:
   zh: 线材
-  category: [ntc, mov, tvs]
+  category: [ntc, mov]
   aliases: [线材, 引线材料, wire material, Wire Material, Lead Material]
 
 encapsulation_material:
   zh: 封装材料
-  category: [ntc, mov, tvs]
+  category: [ntc, mov]
   aliases: [封装材料, 封装, 包封材料, encapsulation, Encapsulation, Coating Material]
 
 storage_humidity:
@@ -352,147 +346,18 @@ storage_period:
 
 soldering_temperature:
   zh: 焊接温度
-  category: [ntc, mov, tvs]
+  category: [ntc, mov]
   unit_hint: ℃
   aliases: [焊接温度, soldering temperature, Solder Temperature]
 
 soldering_time:
   zh: 焊接时间
-  category: [ntc, mov, tvs]
+  category: [ntc, mov]
   unit_hint: sec
   aliases: [焊接时间, soldering time, Solder Time]
 
 soldering_distance:
   zh: 焊接距离
-  category: [ntc, mov, tvs]
+  category: [ntc, mov]
   unit_hint: mm
   aliases: [焊接处距包封头部距离, soldering distance, Solder Distance]
-
-# ============ TVS 瞬态抑制二极管（2026-08-09 墨斗评审后入典；Vishay SMBJ / Littelfuse SMBJ 实测） ============
-breakdown_voltage:
-  zh: 击穿电压
-  category: [diode, tvs]
-  unit_hint: V
-  aliases: [击穿电压, 反向击穿电压, 击穿电压UN, Breakdown Voltage, Reverse Breakdown Voltage, V_BR, VBR, V BR, Breakdown Voltage Max, Max Breakdown Voltage, Min Breakdown Voltage]
-
-polarity:
-  zh: 极性
-  category: [diode, tvs, mov]
-  aliases: [极性, 单向, 双向, 方向性, Polarity, Unidirectional, Bidirectional, Uni Directional, Uni-directional]
-
-test_current:
-  zh: 测试电流
-  category: [diode, tvs]
-  unit_hint: mA
-  aliases: [测试电流, 测试条件电流, 额定测试电流, Test Current, IT, I T, Test Condition Current]
-
-duty_cycle:
-  zh: 占空比
-  category: [diode, tvs, mov]
-  unit_hint: "%"
-  aliases: [占空比, 重复率, Duty Cycle, Repetitive Rate, Duty Factor]
-
-max_peak_pulse_current:
-  zh: 最大峰值脉冲电流
-  category: [diode, tvs]
-  unit_hint: A
-  aliases: [最大峰值脉冲电流, 峰值脉冲电流, 峰值脉冲电流Ipp, Peak Pulse Current, Maximum Peak Pulse Current, I_PP, Ipp, IPP]
-
-lead_finish:
-  zh: 引脚镀层
-  category: [diode, tvs, mov]
-  aliases: [引脚镀层, 端子镀层, 端子表面处理, 引脚表面处理, 镀层, Lead Finish, Terminal Finish, Terminals, Matte Tin, Plating]
-
-peak_pulse_power:
-  zh: 峰值脉冲功率
-  category: [diode, tvs, mov]
-  unit_hint: W
-  aliases: [峰值脉冲功率, 脉冲功率, 峰值脉冲耗散功率, Peak Pulse Power, Peak Pulse Power Dissipation, P_PPM, PPP, PPM, Peak Pulse Power Dissipation by 10/1000 µs Test Waveform (Single Die Parts), Peak Pulse Power Dissipation by 10/1000 µs Test Waveform (Stacked Die Parts)]
-
-standoff_voltage:
-  zh: 截止电压
-  category: [diode, tvs]
-  unit_hint: V
-  aliases: [截止电压, 反向截止电压, 反向工作电压, 工作反向电压, Stand Off Voltage, Stand-off Voltage, Standoff Voltage, V_RWM, VRWM, V_R, Max Stand Off Voltage]
-
-temperature_coefficient_of_breakdown_voltage:
-  zh: 击穿电压温度系数
-  category: [diode, tvs, mov]
-  unit_hint: "%/°C"
-  aliases: [击穿电压温度系数, 击穿电压的温度系数, 温度系数, Temperature Coefficient of Breakdown Voltage, Temp Coefficient of VBR, TC of V_BR, Temp Coefficient of Breakdown Voltage]
-
-solder_heat_resistance:
-  zh: 耐焊接热
-  category: [diode, tvs, mov]
-  aliases: [耐焊接热, 耐焊热, 焊接耐热, Solder Heat Resistance, Resistance to Solder Heat, Soldering Heat Resistance, Heat Resistance of Soldering]
-
-# --- 回流焊曲线（SMD 元件通用；Littelfuse SMBJ 实测） ---
-preheat_temperature_min:
-  zh: 预热温度下限
-  category: [diode, tvs, x2, cmc]
-  unit_hint: °C
-  aliases: [预热温度下限, 预热温度最小值, Preheat Temp Min, Pre Heat Temperature Min, T(S) min, Ts min, TS min]
-
-preheat_temperature_max:
-  zh: 预热温度上限
-  category: [diode, tvs, x2, cmc]
-  unit_hint: °C
-  aliases: [预热温度上限, 预热温度最大值, Preheat Temp Max, Pre Heat Temperature Max, T(S) max, Ts max, TS max]
-
-preheat_time:
-  zh: 预热时间
-  category: [diode, tvs, x2, cmc]
-  unit_hint: sec
-  aliases: [预热时间, Preheat Time, Pre Heat Time, t(S), ts, TS]
-
-ramp_up_rate:
-  zh: 升温速率(液相线至峰值)
-  category: [diode, tvs, x2, cmc]
-  unit_hint: °C/s
-  aliases: [升温速率, 升温速率液相线至峰值, 升温斜率, Ramp Up Rate, Ramp-up Rate, Ramp Up, Average Ramp Up Rate, Average ramp up rate, Average Ramp Up Rate (Liquidus Temp (T_L) to Peak)]
-
-ramp_up_rate_smax_to_l:
-  zh: 升温速率(T_S(max)至液相线)
-  category: [diode, tvs, x2, cmc]
-  unit_hint: °C/s
-  aliases: [升温速率Tsmax至液相线, 预热至液相线升温速率, Ramp Up Rate (T_S(max) to T_L), T_S(max) to T_L - Ramp-up Rate]
-
-ramp_down_rate:
-  zh: 降温速率
-  category: [diode, tvs, x2, cmc]
-  unit_hint: °C/s
-  aliases: [降温速率, 降温斜率, Ramp Down Rate, Ramp-down Rate, Ramp Down]
-
-liquidus_temperature:
-  zh: 液相线温度
-  category: [diode, tvs, x2, cmc]
-  unit_hint: °C
-  aliases: [液相线温度, 回流温度, 液相温度, Liquidus Temperature, Reflow Temperature, T(L), TL]
-
-reflow_time:
-  zh: 回流时间
-  category: [diode, tvs, x2, cmc]
-  unit_hint: sec
-  aliases: [回流时间, 液相线以上时间, Reflow Time, Time Above Liquidus, t(L), TL Time]
-
-time_25c_to_peak:
-  zh: 25℃至峰值时间
-  category: [diode, tvs, x2, cmc]
-  unit_hint: min
-  aliases: [25℃至峰值时间, 25°C至峰值时间, 峰值时间, Time 25C to Peak, Time 25°C to Peak, Time to Peak]
-
-# --- 可靠性试验条件（TVS/二极管；Littelfuse SMBJ 实测） ---
-htrb_condition:
-  zh: 高温阻断试验条件
-  category: [diode, tvs]
-  aliases: [高温阻断试验, 高温阻断试验条件, 高温反偏试验, HTRB, High Temp Voltage Blocking, High Temperature Reverse Bias, HTRB Condition]
-
-uhast_condition:
-  zh: UHAST 试验条件
-  category: [diode, tvs, x2]
-  aliases: [无偏置高加速温湿度试验, UHAST, Unbiased Highly Accelerated Stress Test, UHAST Condition]
-
-temp_cycling_condition:
-  zh: 温度循环试验条件
-  category: [diode, tvs, mov, x2]
-  aliases: [温度循环试验, 温度循环, 温度冲击试验, Temp Cycling, Temperature Cycling, TC, Temp Cycling Condition]
